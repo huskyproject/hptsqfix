@@ -1,3 +1,12 @@
+2003-05-21 Wednesday 08:56  sfpavel
+
+	* debian/control (hptsqfix-1_4-stable.3): Change debian
+	maintainer's E-mail
+
+2003-05-21 Wednesday 08:47  sfpavel
+
+	* debian/changelog (hptsqfix-1_4-stable.5): New version: 1.4-RC1
+
 2003-02-25 Tuesday 09:56  sfpavel
 
 	* debian/changelog (hptsqfix-1_4-stable.4): New debian version:
