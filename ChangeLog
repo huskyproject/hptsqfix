@@ -1,3 +1,31 @@
+2003-05-30 Friday 08:44  sfpavel
+
+	* VERSION, src/hptsqfix.c (hptsqfix-1_2-stable.[1,5]): hptsqfix
+	1.2.4 release
+
+2003-05-30 Friday 08:25  sfpavel
+
+	* debian/: changelog, control, rules (hptsqfix-1_2-stable.[4,2,2]):
+	New debian release
+
+2003-05-27 Tuesday 09:39  d_sergienko
+
+	* make/makefile.bsd (1.1): file makefile.bsd was initially added on
+	branch hptsqfix-1_2-stable.
+
+2003-05-27 Tuesday 09:39  d_sergienko
+
+	* make/makefile.bsd (hptsqfix-1_2-stable.1): 
+	added makefile for BSD
+
+2003-02-26 Wednesday 06:15  stas_degteff
+
+	* VERSION (1.2): hptsqfix don't require fidoconfig
+
+2003-02-11 Tuesday 09:49  sfpavel
+
+	* VERSION (1.1): Add HISTORY and VERSION
+
 2003-01-05 Sunday 09:26  sfpavel
 
 	* debian/changelog (tags: hptsqfix-1_2_2-release)
@@ -39,7 +67,7 @@
 2002-10-04 Friday 06:10  sfpavel
 
 	* make/: makefile.djg (1.1), makefile.emx (1.1) (utags:
-	hptsqfix-1_2_2-release, hptsqfix-1_2-release): Add makefiles for
+	hptsqfix-1_2-release, hptsqfix-1_2_2-release): Add makefiles for
 	DJGPP and OS2/EMX
 
 2002-09-24 Tuesday 03:50  nssoft
