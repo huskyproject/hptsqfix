@@ -24,9 +24,6 @@ hptsqfix.exe: $(OBJS)
 
 clean:
 	-rm -f *.o
-	-rm *~
-	-rm 
-	-rm hptsqfix.exe
 
 distclean: clean
 	-rm hptsqfix.exe
