@@ -1,3 +1,13 @@
+2002-10-04 Friday 13:26  sfpavel
+
+	* Makefile (1.5), debian/changelog (1.2), debian/rules (1.2),
+	src/hptsqfix.c (1.8): New debian package
+
+2002-10-04 Friday 06:10  sfpavel
+
+	* make/: makefile.djg (1.1), makefile.emx (1.1): Add makefiles for
+	DJGPP and OS2/EMX
+
 2002-09-24 Tuesday 03:50  nssoft
 
 	* Makefile (1.4): Added default target. Rename 'man' target to
