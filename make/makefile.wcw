@@ -1,8 +1,8 @@
 CC      = wcc386
 LINK    = WLINK
-SRC     = src
+SRC     = ..\src
 
-CFLAGS  = -zq -wx -bt=nt -ih;.. -oneatx -5
+CFLAGS  = -zq -wx -bt=nt -i..\h;..\.. -oneatx -5
 LFLAGS  =
 
 OBJS = hptsqfix.obj
@@ -15,7 +15,7 @@ $(OBJS): $(SRC)\*.c
 
 hptsqfix.exe: $(OBJS)
   @echo linking hptsqfix
-  $(LINK) $(LFLAGS) FILE hptsqfix.obj Library ..\smapi\smapiwcw, ..\fidoconf\fconfwcw.lib NAME hptsqfix.exe
+  $(LINK) $(LFLAGS) FILE hptsqfix.obj Library ..\..\smapi\smapiwcw, ..\..\fidoconf\fconfwcw.lib NAME hptsqfix.exe
 
 clean:
 	-DEL *.OBJ

@@ -1,9 +1,9 @@
 CC       = gcc
-CFLAGS   = -c -g -O2 -DUNIX -I./h -I..
-LFLAGS   = -s -L../fidoconf -L../smapi
+CFLAGS   = -c -g -O2 -DUNIX -I../h -I../..
+LFLAGS   = -s -L../../fidoconf -L../../smapi
 
 OBJS    = hptsqfix.o
-SRC_DIR = src/
+SRC_DIR = ../src/
 
 all: $(OBJS) \
 	hptsqfix

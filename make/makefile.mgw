@@ -2,13 +2,13 @@
 CC=gcc
 RM=del
 
-CDEFS =-c -I./h -I..
+CDEFS =-c -I../h -I../..
 CFLAGS=-Wall
 COPT  =-O3
 
-LFLAGS=-L../smapi -L../fidoconf
+LFLAGS=-L../../smapi -L../../fidoconf
 LIBS=-lfidoconfigmgw -lsmapimgw -luser32
-SRC_DIR=src/
+SRC_DIR=../src/
 
 default: all
 
