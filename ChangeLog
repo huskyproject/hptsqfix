@@ -1,5 +1,10 @@
-hptsqfix 1.02
----------	
+hptsqfix 1.03
+---------
+
+----- cvs ci ------
+Fri Aug 18 13:38:19 MSD 2001
+max (patch from Serguei Revtov):
+* restore deleted messages (-u switch)
 
 ----- cvs ci ------
 Mon Dec  4 11:31:16 MSK 2000

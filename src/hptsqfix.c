@@ -68,10 +68,11 @@ int Open_File(char *name, word mode)
 
 void usage()
 {
-   fprintf(stderr, "hptsqfix - squish base repairing utility, v.1.02\n");
-   fprintf(stderr, "Usage: hptsqfix [-f] [-e] areafilename ...\n");
+   fprintf(stderr, "hptsqfix - squish base repairing utility, v.1.03\n");
+   fprintf(stderr, "Usage: hptsqfix [-f] [-e] [-u] areafilename ...\n");
    fprintf(stderr, "                 -f  - try to find next header after broken msg\n");
    fprintf(stderr, "                 -e  - 'areafilename' has extension, strip it\n");
+   fprintf(stderr, "                 -u  - undelete (restore deleted messages)\n");
    exit(-1);
 }
 
@@ -117,6 +118,7 @@ int findhdr(int SqdHandle)
 }
 
 int tryfind=0;
+int unDelete=0;
 
 int repair(char *areaName)
 {
@@ -228,14 +230,19 @@ int repair(char *areaName)
 
 
          if (!stop) {
-            if (sqhdr.frame_type != FRAME_normal) {
-               fprintf(stderr, "... free\r");
-               sayFree = 1;
-               lseek(SqdHandle, sqhdr.frame_length, SEEK_CUR);
-               continue;
-            }
+	    if (sqhdr.frame_type != FRAME_normal) {
+		if (unDelete != 0 && sqhdr.frame_type == FRAME_free) {
+		    sqhdr.frame_type = FRAME_normal;
+		    fprintf(stderr, "... free, restoring\n");
+		} else {
+		    sayFree = 1;
+		    fprintf(stderr, "... free\r");
+		    lseek(SqdHandle, sqhdr.frame_length, SEEK_CUR);
+		    continue;
+		}
+	    }
 
-            read_xmsg(SqdHandle, &xmsg);
+	    read_xmsg(SqdHandle, &xmsg);
 
             text = (char*)calloc(sqhdr.frame_length, sizeof(char*));
             farread(SqdHandle, text, (sqhdr.frame_length - XMSG_SIZE));
@@ -282,6 +289,7 @@ int repair(char *areaName)
          }
 
       } /* endfor */
+
       fprintf(stderr, "\n%ld messages read\n", i-2);
 
       lseek(NewSqiHandle, SQIDX_SIZE, SEEK_END);
@@ -329,6 +337,8 @@ int main(int argc, char *argv[])
             tryfind = 1;
          } else if (stricmp(argv[i], "-e")==0) {
             stripExt = 1;
+         } else if (stricmp(argv[i], "-u")==0) {
+            unDelete = 1;
          } else {
             usage();
          }
