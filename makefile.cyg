@@ -1,0 +1,30 @@
+CC      = gcc
+CFLAGS=	-DNT -D__NT__ -DWINNT -D__CYG__ -I./h -I.. -Wall -pedantic -c -Wno-char-subscripts -mno-cygwin
+COPT=	-O2
+LFLAGS=-mno-cygwin
+
+
+OBJS    = hptsqfix.o
+SRC_DIR = src/
+
+LINKSMAPI=../smapi/libsmapicyg.a /lib/w32api/libuser32.a
+#LINKFIDOC=../fidoconf/libfidoconfigcyg.a
+
+all: $(OBJS) hptsqfix.exe
+
+%.o: $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+
+hpucode.exe: $(OBJS)
+	$(CC) $(LFLAGS) -o hptsqfix.exe $(OBJS) $(LINKSMAPI)
+
+clean:
+	-rm -f *.o
+	-rm *~
+	-rm 
+	-rm hptsqfix.exe
+
+distclean: clean
+	-rm hptsqfix.exe
+	-rm *.1.gz
+	-rm *.log
