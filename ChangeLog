@@ -2,6 +2,10 @@ hptsqfix 1.03
 ---------
 
 ----- cvs ci ------
+Fri Apr 26 12:06:49 EEST 2002 (patch from Andr Luk'yanov)
+* added makefile.wco
+
+----- cvs ci ------
 Fri Aug 18 13:38:19 MSD 2001
 max (patch from Serguei Revtov):
 * restore deleted messages (-u switch)
