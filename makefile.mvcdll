@@ -7,12 +7,11 @@ COPT=   -O2
 TLIB=   lib -nologo
 
 SMAPIL=	..\smapi\smapimvc.lib msvcrt.lib Kernel32.lib /link /opt:nowin98
-FCONFL=	..\fidoconf\fconfmvc.lib
 
 all: hptsqfix.exe
 
 hptsqfix.exe:
-        $(CC) $(CFLAGS) $(CDEFS) $(COPT) -Fe$@ src\hptsqfix.c $(FCONFL) $(SMAPIL)
+        $(CC) $(CFLAGS) $(CDEFS) $(COPT) -Fe$@ src\hptsqfix.c $(SMAPIL)
 
 clean:
 	-del *.obj
