@@ -1,4 +1,11 @@
-hptsqfix (1.2.0-1) unstable; urgency=low
+hptsqfix (1.3.0-2) unstable; urgency=low
+
+  * Update debian/rules
+  * Don't depends on libfidoconf0
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Fri,  4 Oct 2002 17:37:56 +0600
+
+hptsqfix (1.3.0-1) unstable; urgency=low
 
   * Initial Release.
 
