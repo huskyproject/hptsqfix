@@ -1,25 +1,71 @@
 # $Id$
 #
-# Microsoft Visual C++ Makefile for build static DLL
+# Microsoft Visual C++ Makefile for build dinamic program(s)
+# No support for the Husky build environment.
+#
+# Tested on MS Visual C 6.0
+#
+include makefile.inc
+
+## programs ##
 
 CC	= cl
-CFLAGS	= -nologo -MD -Zp1
-CINCL	= -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib
-CDEFS	= -D__NT__ -DNT -DWINNT -D_CONSOLE -D_MAKE_DLL
-COPT	= -O2
-TLIB	= lib -nologo
+AR	= lib
+LINK	= link
+RANLIB	=
+RM	= del
 
-LIBS	= ..\..\huskylib\make\huskymvc.lib ..\..\smapi\make\smapimvc.lib \
-	  msvcrt.lib Kernel32.lib /link /opt:nowin98
+## file suffixes ##
+_C	= .c
+_OBJ	= .obj
+_LIB	= .lib
+_EXE	= .exe
+_DLL	= .dll
+_EXP	= .exp
+_ILK	= .ilk
+_PDB	= .pdb
 
-all: hptsqfix.exe
+## program options ##
+CFLAGS=-nologo -MD -Zp1 -Ob2 -c
+CINCL= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib
+LFLAGS=
+CDEFS =-D__NT__ -D_CONSOLE -D_MAKE_DLL
+EXENAMEFLAG=-Fe
 
-hptsqfix.exe:
-        $(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) \
-	-Fe$@ ..\src\hptsqfix.c $(LIBS)
+# List of HUSKY libraries required to build binary file(s)
+LIBS	= ..\..\huskylib\make\huskymvc.lib \
+	  ..\..\smapi\make\smapimvc.lib ..\..\fidoconf\make\fconfmvc.lib \
+	  USER32.LIB msvcrt.lib Kernel32.lib \
+	  /link /nodefaultlib /opt:nowin98
+
+default: all
+programs: $(PROGRAMS)
+all: programs
+
+{$(_SRC_DIR)}.c$(_OBJ):
+	@$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $<
+
+
+$(PROGRAMS): $(OBJS)
+	$(CC) $(LFLAGS) $(EXENAMEFLAG)$@ $** $(LIBS)
+
+man:
+
+doc: man
+	man2html$(EXE) <..\$(EXENAME).1 >$(EXENAME).html
 
 clean:
-	-del *.obj
+	-$(RM) $(RMOPT) *$(OBJ)
 
 distclean: clean
-	-del *.exe
+	-$(RM) $(RMOPT) $(TARGET)
+	-$(RM) $(RMOPT) $(EXENAME).html
+
+install: programs doc
+	$(INSTALL) $(IBOPT) $(TARGET) $(BINDIR)
+	$(INSTALL) $(IBOPT) ..\$(EXENAME).1 $(DOCDIR)
+	$(INSTALL) $(IBOPT) $(EXENAME).html $(DOCDIR)
+
+uninstall:
+	-$(RM) $(RMOPT) $(BINDIR)\$(TARGET)
+	-$(RM) $(RMOPT) $(DOCDIR)\$(EXENAME).html
