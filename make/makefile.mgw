@@ -1,25 +1,30 @@
+# $Id$
+#
+# Makefile for Building hptkill with cross-compiler Mingw32
+# No support for the Husky build environment.
 
-CC=gcc
-RM=del
+CC	= gcc
+RM	= del
 
-CDEFS =-c -I../h -I../..
-CFLAGS=-Wall
-COPT  =-O3
+CDEFS	= -c
+CINCL	= -I../h -I../../fidoconf -I../../smapi -I../../huskylib
+CFLAGS	= -Wall
+COPT	= -O3
 
-LFLAGS=-L../../smapi -L../../fidoconf
-LIBS=-lfidoconfigmgw -lsmapimgw -luser32
-SRC_DIR=../src/
+LFLAGS	= -L../../huskylib/make -L../../smapi/make -L../../fidoconf
+LIBS	= -lfidoconfigmgw -lsmapimgw -lhuskymgw  -luser32
+SRC_DIR	= ../src/
 
 default: all
 
-TARGET=hptsqfix.exe
+TARGET	= hptsqfix.exe
 
-OBJS=hptsqfix.o
+OBJS	= hptsqfix.o
 
 all: $(TARGET)
 
 %.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CDEFS) $(COPT) $(SRC_DIR)$*.c
+	$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) $(SRC_DIR)$*.c
 
 $(TARGET): $(OBJS)
 	$(CC) $(LFLAGS) -o $(TARGET) $(OBJS) $(LIBS)

@@ -1,17 +1,21 @@
-# Microsoft Visual C++ Makefile
+# $Id$
+#
+# Microsoft Visual C++ Makefile for build hptsqfix static library
 
-CC=     cl
-CFLAGS= -nologo -Zp1 -I..\.. -I..\h
-CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE
-COPT=   -O2
-TLIB=   lib -nologo
+CC	= cl
+CFLAGS	= -nologo -Zp1
+CINCL	= -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib
+CDEFS	= -D__NT__ -DNT -DWINNT -D_CONSOLE
+COPT	= -O2
+TLIB	= lib -nologo
 
-SMAPIL=	..\..\smapi\smapimvc.lib
+LIBS	= ..\..\huskylib\make\huskymvc.lib ..\..\smapi\make\smapimvc.lib
 
 all: hptsqfix.exe
 
 hptsqfix.exe:
-        $(CC) $(CFLAGS) $(CDEFS) $(COPT) -Fe$@ ..\src\hptsqfix.c $(SMAPIL)
+        $(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) \
+	-Fe$@ ..\src\hptsqfix.c $(LIBS)
 
 clean:
 	-del *.obj

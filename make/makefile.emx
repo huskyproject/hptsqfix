@@ -4,7 +4,8 @@
 # Do not support husky build enviroment
 
 CC     = gcc
-CFLAGS = -DOS2 -I../h -I../.. -c -O3
+CFLAGS = -DOS2 -c -O3
+CINCL	= -I../h -I../../fidoconf -I../../smapi -I../../huskylib
 COPT   = -O2
 LFLAGS = -Zcrtdll
 
@@ -12,15 +13,15 @@ LFLAGS = -Zcrtdll
 OBJS    = hptsqfix.o
 SRC_DIR = ../src/
 
-LINKSMAPI=../../smapi/smapiemx.a
+LIBS	= ../../huskylib/make/huskyemx.a ../../smapi/make/smapiemx.a
 
 all: $(OBJS) hptsqfix.exe
 
 %.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+	$(CC) $(CFLAGS) $(CINCL) $(SRC_DIR)$*.c
 
 hptsqfix.exe: $(OBJS)
-	$(CC) $(LFLAGS) -o hptsqfix.exe $(OBJS) $(LINKSMAPI)
+	$(CC) $(LFLAGS) -o hptsqfix.exe $(OBJS) $(LIBS)
 
 clean:
 	-rm -f *.o

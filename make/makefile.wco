@@ -1,9 +1,19 @@
+# $Id$
+#
+# Makefile for Building hptsqfix with Watcom C++ for OS/2
+# No support for Husky build environment.
+#
+# Predefines: __WATCOMC__,
+# __OS2V2__ (-bt=os2v2)
+
 CC      = wcc386
 LINK    = WLINK
 SRC     = ..\src
 
-CFLAGS  = -zq -wx -bt=os2v2 -j -i..\h;..\.. -oneatx -5 -DOS2
+CFLAGS  = -zq -wx -bt=os2v2 -j -oneatx -5 -DOS2
+CINCL	= -i..\h;..\..\fidocon;..\..\smapi;..\..\huskylib
 LFLAGS  = system os2v2
+LIBS	= Library ..\..\huskylib\make\huskywco.lib, ..\..\smapi\make\smapiwco.lib, ..\..\fidoconf\fconfwco.lib
 
 OBJS = hptsqfix.obj
 
@@ -11,11 +21,11 @@ all: $(OBJS) hptsqfix.exe
 
 $(OBJS): $(SRC)\*.c
   @echo compiling $*.c
-  $(CC) $(CFLAGS) $(SRC)\$*.c
+  $(CC) $(CFLAGS) $(CINCL) $(SRC)\$*.c
 
 hptsqfix.exe: $(OBJS)
   @echo linking hptsqfix
-  $(LINK) $(LFLAGS) FILE hptsqfix.obj Library ..\..\smapi\smapiwco.lib, ..\..\fidoconf\fconfwco.lib NAME hptsqfix.exe
+  $(LINK) $(LFLAGS) FILE hptsqfix.obj $(LIBS) NAME hptsqfix.exe
 
 clean:
 	-DEL *.OBJ
