@@ -2,9 +2,9 @@
 CC=gcc
 RM=del
 
-CDEFS=-D__NT__ -D__MINGW__ -c -I./h -I..
+CDEFS =-c -I./h -I..
 CFLAGS=-Wall
-COPT=-O3
+COPT  =-O3
 
 LFLAGS=-L../smapi -L../fidoconf
 LIBS=-lfidoconfigmgw -lsmapimgw -luser32
