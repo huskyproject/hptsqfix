@@ -1,3 +1,8 @@
+2002-09-24 Tuesday 03:50  nssoft
+
+	* Makefile (1.4): Added default target. Rename 'man' target to
+	'hptsqfix.1.gz' target.
+
 2002-09-20 Friday 11:27  sfpavel
 
 	* src/hptsqfix.c (1.7): Fix compiler warnings
