@@ -6,12 +6,12 @@ CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE
 COPT=   -O2
 TLIB=   lib -nologo
 
-SMAPIL=	..\..\smapi\smapimvc.lib
+SMAPIL=	..\..\smapi\smapimvc.lib ..\..\fidoconf\fconfmvc.lib
 
 all: hptsqfix.exe
 
 hptsqfix.exe:
-        $(CC) $(CFLAGS) $(CDEFS) $(COPT) -Fe$@ ..\src\hptsqfix.c $(SMAPIL)
+	$(CC) $(CFLAGS) $(CDEFS) $(COPT) -Fe$@ ..\src\hptsqfix.c $(SMAPIL)
 
 clean:
 	-del *.obj

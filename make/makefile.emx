@@ -12,7 +12,7 @@ LFLAGS = -Zcrtdll
 OBJS    = hptsqfix.o
 SRC_DIR = ../src/
 
-LINKSMAPI=../../smapi/smapiemx.a
+LINKSMAPI=../../fidoconf/fconfemx.a ../../smapi/smapiemx.a
 
 all: $(OBJS) hptsqfix.exe
 

@@ -12,7 +12,7 @@ LFLAGS	= -s -L../../smapi
 OBJS    = hptsqfix.o
 SRC_DIR = ../src/
 
-LINKSMAPI=../../smapi/smapidjg.a
+LINKSMAPI=../../fidoconf/fconfdjg.a ../../smapi/smapidjg.a
 
 all: $(OBJS) hptsqfix.exe
 

@@ -12,7 +12,7 @@ LFLAGS	= -mno-cygwin
 OBJS    = hptsqfix.o
 SRC_DIR = ../src/
 
-LINKSMAPI=../../smapi/libsmapicyg.a
+LINKSMAPI=../../fidoconf/libfidoconfigcyg.a ../../smapi/libsmapicyg.a
 
 TARGET	= hptsqfix.exe
 

@@ -6,12 +6,12 @@ CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE -D_MAKE_DLL
 COPT=   -O2
 TLIB=   lib -nologo
 
-SMAPIL=	..\..\smapi\smapimvc.lib msvcrt.lib Kernel32.lib /link /opt:nowin98
+SMAPIL=	..\..\smapi\smapimvc.lib ..\..\fidoconf\fconfmvc.lib msvcrt.lib Kernel32.lib /link /opt:nowin98
 
 all: hptsqfix.exe
 
 hptsqfix.exe:
-        $(CC) $(CFLAGS) $(CDEFS) $(COPT) -Fe$@ ..\src\hptsqfix.c $(SMAPIL)
+	$(CC) $(CFLAGS) $(CDEFS) $(COPT) -Fe$@ ..\src\hptsqfix.c $(SMAPIL)
 
 clean:
 	-del *.obj

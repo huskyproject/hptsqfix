@@ -10,12 +10,12 @@ OBJS = hptsqfix.obj
 all: $(OBJS) hptsqfix.exe
 
 $(OBJS): $(SRC)\*.c
-  @echo compiling $*.c
-  $(CC) $(CFLAGS) $(SRC)\$*.c
+	@echo compiling $*.c
+	$(CC) $(CFLAGS) $(SRC)\$*.c
 
 hptsqfix.exe: $(OBJS)
-  @echo linking hptsqfix
-  $(LINK) $(LFLAGS) FILE hptsqfix.obj Library ..\..\smapi\smapiwco.lib, ..\..\fidoconf\fconfwco.lib NAME hptsqfix.exe
+	@echo linking hptsqfix
+	$(LINK) $(LFLAGS) FILE hptsqfix.obj Library ..\..\smapi\smapiwco.lib, ..\..\fidoconf\fconfwco.lib NAME hptsqfix.exe
 
 clean:
 	-DEL *.OBJ
