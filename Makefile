@@ -26,13 +26,15 @@ CDEFS=-D$(OSTYPE) -DUNAME=\"$(UNAME)\" $(ADDCDEFS)
 OBJS    = hptsqfix$(OBJ)
 SRC_DIR = src/
 
+default: all
+
 %$(OBJ): $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
 
 hptsqfix$(EXE): $(OBJS)
 	$(CC) $(LFLAGS) $(OBJS) $(LIBS) -o hptsqfix$(EXE)
 
-man: man/hptsqfix.1
+hptsqfix.1.gz: man/hptsqfix.1
 	gzip -9c man/hptsqfix.1 > hptsqfix.1.gz
 
 clean:
@@ -45,7 +47,7 @@ distclean: clean
 	-$(RM) $(RMOPT) hptsqfix$(EXE)
 	-$(RM) $(RMOPT) hptsqfix.1.gz
 
-all: hptsqfix$(EXE) man
+all: hptsqfix$(EXE) hptsqfix.1.gz
 
 install: all
 	$(INSTALL) $(IBOPT) hptsqfix$(EXE) $(BINDIR)
