@@ -147,6 +147,8 @@ int repair(char *areaName)
     int stop;
     int firstmsg=1;
     int sayFree=0;
+    dword frame_length = 0;
+    dword num_msg =  0;
     
     char *sqd, *newsqd, *newsqi, *text;
     
@@ -203,7 +205,8 @@ int repair(char *areaName)
         read_sqbase(SqdHandle, &sqbase);
         if(mSort)
         {
-            SortedBase = calloc(sizeof(sortedbase),sqbase.num_msg);
+            num_msg = sqbase.num_msg;
+            SortedBase = calloc(sizeof(sortedbase),num_msg);
             if(!SortedBase)
             {
                 fprintf(stderr, "\nNot enough memory to sort base\n");
@@ -290,6 +293,8 @@ int repair(char *areaName)
                 text = (char*)calloc(sqhdr.frame_length, sizeof(char*));
                 farread(SqdHandle, text, (sqhdr.frame_length - XMSG_SIZE));
                 memcpy(text,text,sqhdr.msg_length);
+                frame_length       = sqhdr.frame_length;
+                sqhdr.frame_length = sqhdr.msg_length;
                 if (firstmsg) {
                     sqhdr.prev_frame = 0;
                     firstmsg=0;
@@ -304,6 +309,16 @@ int repair(char *areaName)
                 
                 if(mSort)
                 {
+                    if(num_msg == sqbase.num_msg)
+                    {
+                        num_msg = sqbase.num_msg+1;
+                        SortedBase = realloc(SortedBase,num_msg*sizeof(sortedbase));
+                        if(!SortedBase)
+                        {
+                            fprintf(stderr, "\nNot enough memory to sort base\n");
+                            mSort = 0;
+                        }
+                    }
                     DosDate_to_TmDate((union stamp_combo *)&xmsg.date_written, &tmdate);
                     SortedBase[sqbase.num_msg].frame_pos = sqbase.last_frame;
                     SortedBase[sqbase.num_msg].msgTime   = mktime(&tmdate);
@@ -333,7 +348,7 @@ int repair(char *areaName)
                 }
                 fprintf(stderr, "\r");
                 
-                maxMsgLen -= sqhdr.frame_length;
+                maxMsgLen -= frame_length;
             }
        } /* endfor */
        
@@ -357,7 +372,7 @@ int repair(char *areaName)
        
        if(mSort)
        {
-           dword num_msg = sqbase.num_msg;
+           num_msg = sqbase.num_msg;           
            
            fprintf(stderr, "\nSorting msgbase...\n");
            
