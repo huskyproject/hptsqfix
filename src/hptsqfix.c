@@ -44,6 +44,9 @@
 #include <smapi/msgapi.h>
 #include <squish.h>
 
+#define VERSION	"1.3.0"
+#include "cvsdate.h"
+
 #define fop_wpb (O_CREAT | O_TRUNC | O_RDWR | O_BINARY)
 #define fop_rpb (O_RDWR | O_BINARY)
 
@@ -64,7 +67,7 @@ int Open_File(char *name, word mode)
 
 void usage()
 {
-    fprintf(stderr, "hptsqfix - squish base repairing utility, v.1.3.0\n");
+    fprintf(stderr, "hptsqfix - squish base repairing utility, v.%s %s\n", VERSION, cvs_date);
     fprintf(stderr, "Usage: hptsqfix [-f] [-e] [-u] [-s] areafilename ...\n");
     fprintf(stderr, "                 -f  - try to find next header after broken msg\n");
     fprintf(stderr, "                 -e  - 'areafilename' has extension, strip it\n");
