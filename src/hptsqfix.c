@@ -48,11 +48,10 @@
 /* smapi */
 #include <smapi/msgapi.h>
 
-/* sqpack */
-#include "../h/squish.h"
+#include "squish.h"
+#include "version.h"
 
-#define VERSION	"1.9.0-cur"
-#include "../h/cvsdate.h"
+char *versionStr;
 
 #define fop_wpb (O_CREAT | O_TRUNC | O_RDWR | O_BINARY)
 #define fop_rpb (O_RDWR | O_BINARY)
@@ -87,11 +86,13 @@ int Open_File(char *name, word mode)
 
 void usage()
 {
-    fprintf(stderr, "hptsqfix - squish base repairing utility, v.%s %s\n", VERSION, cvs_date);
-    fprintf(stderr, "Usage: hptsqfix [-f] [-e] [-u] areafilename ...\n");
-    fprintf(stderr, "                 -f  - try to find next header after broken msg\n");
-    fprintf(stderr, "                 -e  - 'areafilename' has extension, strip it\n");
-    fprintf(stderr, "                 -u  - undelete (restore deleted messages)\n");
+    versionStr = GenVersionStr( "hptsqfix", VER_MAJOR, VER_MINOR, VER_PATCH,
+                               VER_BRANCH, cvs_date );
+    printf("%s\n", versionStr);
+    fprintf(stderr, "\nUsage:\thptsqfix [-f] [-e] [-u] areafilename ...\n");
+    fprintf(stderr, "\t-f  - try to find next header after broken msg\n");
+    fprintf(stderr, "\t-e  - 'areafilename' has extension, strip it\n");
+    fprintf(stderr, "\t-u  - undelete (restore deleted messages)\n");
     exit(-1);
 }
 /*
