@@ -61,14 +61,17 @@ int Open_File(char *name, word mode)
    handle = sopen(name, mode, SH_DENYNONE, S_IREAD | S_IWRITE);
 #endif
 
+   if (handle<0) fprintf(stderr, "Can't open file '%s'\n", name);
+
    return handle;
 }
 
 void usage()
 {
-   fprintf(stderr, "hptsqfix - squish base repairing utility, v.1.1\n");
-   fprintf(stderr, "Usage: hptsqfix [-f] areafilename\n");
+   fprintf(stderr, "hptsqfix - squish base repairing utility, v.1.02\n");
+   fprintf(stderr, "Usage: hptsqfix [-f] [-e] areafilename ...\n");
    fprintf(stderr, "                 -f  - try to find next header after broken msg\n");
+   fprintf(stderr, "                 -e  - 'areafilename' has extension, strip it\n");
    exit(-1);
 }
 
@@ -87,25 +90,25 @@ int findhdr(int SqdHandle)
 
    do {
       if (read (SqdHandle, &chr, 1) == 1) {
-	 pos++;
-	 if (chr == sqhdrid[i]) {
-	    i++;
-	    if (i==4) {
-	       fprintf(stderr, " Wow! Found at pos %lu\n", (unsigned long) pos-4);
-	       lseek(SqdHandle, pos-4, SEEK_SET);
-	       rc = 0;
-	       stop = 1;
-	    }
-	 } else {
-	    if (chr == sqhdrid[0])
-	       i = 1;
-	    else
-	       i = 0;
-	 }
+         pos++;
+         if (chr == sqhdrid[i]) {
+            i++;
+            if (i==4) {
+               fprintf(stderr, " Wow! Found at pos %lu\n", (unsigned long) pos-4);
+               lseek(SqdHandle, pos-4, SEEK_SET);
+               rc = 0;
+               stop = 1;
+            }
+         } else {
+            if (chr == sqhdrid[0])
+               i = 1;
+            else
+               i = 0;
+         }
       } else {
-	 fprintf(stderr, " not found\n");
-	 stop = 1;
-	 rc = 1;
+         fprintf(stderr, " not found\n");
+         stop = 1;
+         rc = 1;
       }
 
    } while (!stop);
@@ -113,10 +116,10 @@ int findhdr(int SqdHandle)
    return rc;
 }
 
-int main(int argc, char *argv[])
-{
+int tryfind=0;
 
-   char *areaName;
+int repair(char *areaName)
+{
 
    int SqdHandle;
    int NewSqdHandle, NewSqiHandle;
@@ -124,7 +127,7 @@ int main(int argc, char *argv[])
    long saved=0;
    int stop;
    int firstmsg=1;
-   int tryfind=0;
+   int sayFree=0;
 
    char *sqd, *newsqd, *newsqi, *text;
 
@@ -134,22 +137,20 @@ int main(int argc, char *argv[])
    SQIDX      sqidx;
    size_t     maxMsgLen;
 
-   if ( argc > 3 || argc < 2) usage();
-
-   if ( argc == 3 ) {
-      if (stricmp(argv[1], "-f")) usage();
-      tryfind = 1;
-      areaName = argv[2];
-   } else {  // ( argc == 2)
-      areaName= argv[1];
-   }
-
    sqd = (char*)malloc(strlen(areaName)+5);
 
    newsqd = (char*)malloc(strlen(areaName)+5);
    newsqi = (char*)malloc(strlen(areaName)+5);
 
    sprintf(sqd, "%s%s", areaName, EXT_SQDFILE);
+
+   SqdHandle = Open_File(sqd, fop_rpb);
+   if (SqdHandle == -1) {
+      free(sqd);
+      free(newsqd);
+      free(newsqi);
+      return 0;
+   } /* endif */
 
    sprintf(newsqd, "%s.tmd", areaName);
    sprintf(newsqi, "%s.tmi", areaName);
@@ -159,6 +160,8 @@ int main(int argc, char *argv[])
       free(sqd);
       free(newsqd);
       free(newsqi);
+      close(SqdHandle);
+      return 0;
    } /* endif */
    NewSqiHandle = Open_File(newsqi, fop_wpb);
    if (NewSqiHandle == -1) {
@@ -166,16 +169,7 @@ int main(int argc, char *argv[])
       free(newsqd);
       free(newsqi);
       close(NewSqdHandle);
-      return 0;
-   } /* endif */
-
-   SqdHandle = Open_File(sqd, fop_rpb);
-   if (SqdHandle == -1) {
-      free(sqd);
-      free(newsqd);
-      free(newsqi);
-      close(NewSqdHandle);
-      close(NewSqiHandle);
+      close(SqdHandle);
       return 0;
    } /* endif */
 
@@ -199,88 +193,93 @@ int main(int argc, char *argv[])
 
       for (stop = 0, i = 1; !stop; i++) {
 
-	 fprintf(stderr, "Msg %d", i);
+         fprintf(stderr, "Msg %d", i);
 
-	 if (read_sqhdr(SqdHandle, &sqhdr) == 0) {
-	    fprintf(stderr, "... end\n");
-	    stop++;
-	 }
+         if (read_sqhdr(SqdHandle, &sqhdr) == 0) {
+            fprintf(stderr, "... end");
+            stop++;
+         }
 
-	 if (stop==0 && sqhdr.id != SQHDRID) {
+         if (stop==0 && sqhdr.id != SQHDRID) {
 
-	    fprintf(stderr, "\nLooks like Message header is damaged\n");
+            fprintf(stderr, "\nLooks like Message header is damaged\n");
 
-	    if ( tryfind ) {
-	      stop = findhdr(SqdHandle);
-	      continue;
-	    }else{
-	      fprintf(stderr, "\nYou may want to use -f parameter\n");
-	      stop++;
-	    }
-	 }
+            if ( tryfind ) {
+              stop = findhdr(SqdHandle);
+              continue;
+            }else{
+              fprintf(stderr, "\nYou may want to use -f parameter\n");
+              stop++;
+            }
+         }
 
-	 if (stop==0 && sqhdr.frame_length > maxMsgLen) {
+         if (stop==0 && sqhdr.frame_length > maxMsgLen) {
 
-	    fprintf(stderr, "\nFrame is larger than rest of file\nLooks like Message header is damaged\n");
+            fprintf(stderr, "\nFrame is larger than rest of file\nLooks like Message header is damaged\n");
 
-	    if ( tryfind ) {
-	      stop = findhdr(SqdHandle);
-	      continue;
-	    }else{
-	      fprintf(stderr, "\nYou may want to use -f parameter\n");
-	      stop++;
-	    }
-	 }
-
-
-	 if (!stop) {
-	    if (sqhdr.frame_type != FRAME_normal) {
-	       fprintf(stderr, "... free\n");
-	       lseek(SqdHandle, sqhdr.frame_length, SEEK_CUR);
-	       continue;
-	    }
-
-	    read_xmsg(SqdHandle, &xmsg);
-
-	    text = (char*)calloc(sqhdr.frame_length, sizeof(char*));
-	    farread(SqdHandle, text, (sqhdr.frame_length - XMSG_SIZE));
-
-	    if (firstmsg) {
-	       sqhdr.prev_frame = 0;
-	       firstmsg=0;
-	    } else {
-	       sqhdr.prev_frame = sqbase.last_frame;
-	    } /* endif */
-
-	    sqhdr.next_frame = tell(NewSqdHandle) + SQHDR_SIZE + sqhdr.frame_length;
-
-	    sqbase.last_frame = tell(NewSqdHandle);
-	    sqidx.ofs = sqbase.last_frame;
+            if ( tryfind ) {
+              stop = findhdr(SqdHandle);
+              continue;
+            }else{
+              fprintf(stderr, "\nYou may want to use -f parameter\n");
+              stop++;
+            }
+         }
 
 
-	    write_sqhdr(NewSqdHandle, &sqhdr);
-	    write_xmsg(NewSqdHandle, &xmsg);
-	    farwrite(NewSqdHandle, text, (sqhdr.frame_length - XMSG_SIZE));
+         if (!stop) {
+            if (sqhdr.frame_type != FRAME_normal) {
+               fprintf(stderr, "... free\r");
+               sayFree = 1;
+               lseek(SqdHandle, sqhdr.frame_length, SEEK_CUR);
+               continue;
+            }
 
-	    sqbase.end_frame = tell(NewSqdHandle);
+            read_xmsg(SqdHandle, &xmsg);
 
-	    sqidx.hash = SquishHash(xmsg.to);
-	    if (xmsg.attr & MSGREAD) {
-	       sqidx.hash |= (dword) 0x80000000L;
-	    }
-	    sqidx.umsgid = sqbase.num_msg+1;
+            text = (char*)calloc(sqhdr.frame_length, sizeof(char*));
+            farread(SqdHandle, text, (sqhdr.frame_length - XMSG_SIZE));
 
-	    write_sqidx(NewSqiHandle, &sqidx, 1);
-	    free(text);
+            if (firstmsg) {
+               sqhdr.prev_frame = 0;
+               firstmsg=0;
+            } else {
+               sqhdr.prev_frame = sqbase.last_frame;
+            } /* endif */
 
-	    sqbase.num_msg++;
-	    sqbase.high_msg = sqbase.num_msg;
-	    saved++;
-	    fprintf(stderr, "\r");
+            sqhdr.next_frame = tell(NewSqdHandle) + SQHDR_SIZE + sqhdr.frame_length;
 
-	    maxMsgLen -= sqhdr.frame_length;
+            sqbase.last_frame = tell(NewSqdHandle);
+            sqidx.ofs = sqbase.last_frame;
 
-	 }
+
+            write_sqhdr(NewSqdHandle, &sqhdr);
+            write_xmsg(NewSqdHandle, &xmsg);
+            farwrite(NewSqdHandle, text, (sqhdr.frame_length - XMSG_SIZE));
+
+            sqbase.end_frame = tell(NewSqdHandle);
+
+            sqidx.hash = SquishHash(xmsg.to);
+            if (xmsg.attr & MSGREAD) {
+               sqidx.hash |= (dword) 0x80000000L;
+            }
+            sqidx.umsgid = sqbase.num_msg+1;
+
+            write_sqidx(NewSqiHandle, &sqidx, 1);
+            free(text);
+
+            sqbase.num_msg++;
+            sqbase.high_msg = sqbase.num_msg;
+            saved++;
+            if (sayFree) {
+               fprintf(stderr, "        ");
+               sayFree=0;
+            }
+            fprintf(stderr, "\r");
+
+            maxMsgLen -= sqhdr.frame_length;
+
+         }
 
       } /* endfor */
       fprintf(stderr, "\n%ld messages read\n", i-2);
@@ -315,3 +314,50 @@ int main(int argc, char *argv[])
 
 return 0;
 }
+
+
+int main(int argc, char *argv[])
+{
+   int i, j, extIndx;
+   int stripExt=0;
+
+   if (argc < 2) usage();
+
+   for (i=1; i<argc; i++) {
+      if (argv[i][0] == '-') {
+         if (stricmp(argv[i], "-f")==0) {
+            tryfind = 1;
+         } else if (stricmp(argv[i], "-e")==0) {
+            stripExt = 1;
+         } else {
+            usage();
+         }
+      }
+   }
+
+   for (i=1; i<argc; i++) {
+      if (argv[i][0] != '-') {
+
+         if (stripExt) {
+            extIndx=0;
+            for (j=0; argv[i][j]; j++) {
+               if (argv[i][j]=='.') extIndx = j;
+            }
+            if (extIndx > 0) {
+               argv[i][extIndx] = '\0';
+            } else {
+               fprintf(stderr, "Warning: loose extension in '%s'\n", argv[i]);
+            }
+         }
+
+         fprintf(stderr, "Repairing area '%s'\n", argv[i]);
+
+         repair(argv[i]);
+
+         fprintf(stderr, "Done\n\n");
+      }
+   }
+
+return 0;
+}
+
