@@ -16,7 +16,7 @@ LINKSMAPI=../../smapi/libsmapicyg.a
 
 TARGET	= hptsqfix.exe
 
-all: $(OBJS) hptsqfix.exe
+all: $(TARGET)
 
 %.o: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
