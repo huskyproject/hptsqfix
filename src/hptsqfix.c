@@ -215,7 +215,6 @@ int repair(char *areaName)
     int firstmsg=1;
     int sayFree=0;
     dword frame_length = 0;
-    dword num_msg =  0;
     
     char *sqd, *newsqd, *newsqi, *text;
     
