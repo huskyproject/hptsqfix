@@ -40,11 +40,9 @@
 #include <unistd.h>
 #endif
 
+
 #include <smapi/prog.h>
-#include <smapi/compiler.h>
 #include <smapi/msgapi.h>
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
 
 #include <squish.h>
 
@@ -181,146 +179,162 @@ int repair(char *areaName)
 
 
    if (lock(SqdHandle, 0, 1) == 0) {
+       
+       read_sqbase(SqdHandle, &sqbase);
+       sqbase.num_msg = 0;
+       sqbase.high_msg = 0;
+       sqbase.skip_msg = 0;
+       sqbase.begin_frame = SQBASE_SIZE;
+       sqbase.last_frame = sqbase.begin_frame;
+       sqbase.free_frame = sqbase.last_free_frame = 0;
+       sqbase.end_frame = sqbase.begin_frame;
+       write_sqbase(NewSqdHandle, &sqbase);
+       
+       
+       for (stop = 0, i = 1; !stop; i++) {
+           
+           fprintf(stderr, "Msg %d", i);
+           
+           if (read_sqhdr(SqdHandle, &sqhdr) == 0) {
+               fprintf(stderr, "... end");
+               stop++;
+           }
+           
+           if(sqhdr.frame_length != sqhdr.msg_length)
+               fprintf(stderr, "\nFrame Length != Msg Length %d:%d\n",sqhdr.frame_length ,sqhdr.msg_length); 
 
-      read_sqbase(SqdHandle, &sqbase);
-      sqbase.num_msg = 0;
-      sqbase.high_msg = 0;
-      sqbase.skip_msg = 0;
-      sqbase.begin_frame = SQBASE_SIZE;
-      sqbase.last_frame = sqbase.begin_frame;
-      sqbase.free_frame = sqbase.last_free_frame = 0;
-      sqbase.end_frame = sqbase.begin_frame;
-      write_sqbase(NewSqdHandle, &sqbase);
+           if (stop==0 && sqhdr.id != SQHDRID) {
+               
+               fprintf(stderr, "\nLooks like Message header is damaged\n");
+               
+               if ( tryfind ) {
+                   stop = findhdr(SqdHandle);
+                   continue;
+               }else{
+                   fprintf(stderr, "\nYou may want to use -f parameter\n");
+                   stop++;
+               }
+           }
 
-
-      for (stop = 0, i = 1; !stop; i++) {
-
-         fprintf(stderr, "Msg %d", i);
-
-         if (read_sqhdr(SqdHandle, &sqhdr) == 0) {
-            fprintf(stderr, "... end");
-            stop++;
-         }
-
-         if (stop==0 && sqhdr.id != SQHDRID) {
-
-            fprintf(stderr, "\nLooks like Message header is damaged\n");
-
-            if ( tryfind ) {
-              stop = findhdr(SqdHandle);
-              continue;
-            }else{
-              fprintf(stderr, "\nYou may want to use -f parameter\n");
-              stop++;
-            }
-         }
-
-         if (stop==0 && sqhdr.frame_length > maxMsgLen) {
-
-            fprintf(stderr, "\nFrame is larger than rest of file\nLooks like Message header is damaged\n");
-
-            if ( tryfind ) {
-              stop = findhdr(SqdHandle);
-              continue;
-            }else{
-              fprintf(stderr, "\nYou may want to use -f parameter\n");
-              stop++;
-            }
-         }
-
-
-         if (!stop) {
-	    if (sqhdr.frame_type != FRAME_normal) {
-		if (unDelete != 0 && sqhdr.frame_type == FRAME_free) {
-		    sqhdr.frame_type = FRAME_normal;
-		    fprintf(stderr, "... free, restoring\n");
-		} else {
-		    sayFree = 1;
-		    fprintf(stderr, "... free\r");
-		    lseek(SqdHandle, sqhdr.frame_length, SEEK_CUR);
-		    continue;
-		}
-	    }
-
-	    read_xmsg(SqdHandle, &xmsg);
-
-            text = (char*)calloc(sqhdr.frame_length, sizeof(char*));
-            farread(SqdHandle, text, (sqhdr.frame_length - XMSG_SIZE));
-
-            if (firstmsg) {
-               sqhdr.prev_frame = 0;
-               firstmsg=0;
-            } else {
-               sqhdr.prev_frame = sqbase.last_frame;
-            } /* endif */
-
-            sqhdr.next_frame = tell(NewSqdHandle) + SQHDR_SIZE + sqhdr.frame_length;
-
-            sqbase.last_frame = tell(NewSqdHandle);
-            sqidx.ofs = sqbase.last_frame;
-
-
-            write_sqhdr(NewSqdHandle, &sqhdr);
-            write_xmsg(NewSqdHandle, &xmsg);
-            farwrite(NewSqdHandle, text, (sqhdr.frame_length - XMSG_SIZE));
-
-            sqbase.end_frame = tell(NewSqdHandle);
-
-            sqidx.hash = SquishHash(xmsg.to);
-            if (xmsg.attr & MSGREAD) {
-               sqidx.hash |= (dword) 0x80000000L;
-            }
-            sqidx.umsgid = sqbase.num_msg+1;
-
-            write_sqidx(NewSqiHandle, &sqidx, 1);
-            free(text);
-
-            sqbase.num_msg++;
-            sqbase.high_msg = sqbase.num_msg;
-            saved++;
-            if (sayFree) {
-               fprintf(stderr, "        ");
-               sayFree=0;
-            }
-            fprintf(stderr, "\r");
-
-            maxMsgLen -= sqhdr.frame_length;
-
-         }
-
-      } /* endfor */
-
-      fprintf(stderr, "\n%ld messages read\n", i-2);
-
-      lseek(NewSqiHandle, SQIDX_SIZE, SEEK_END);
-      read_sqidx(NewSqiHandle, &sqidx, 1);
-      lseek(NewSqdHandle, sqidx.ofs, SEEK_SET);
-      read_sqhdr(NewSqdHandle, &sqhdr);
-      sqhdr.next_frame = 0;
-      lseek(NewSqdHandle, sqidx.ofs, SEEK_SET);
-      write_sqhdr(NewSqdHandle, &sqhdr);
-      lseek(NewSqdHandle, 0L, SEEK_SET);
-      write_sqbase(NewSqdHandle, &sqbase);
-
-      unlock(SqdHandle, 0, 1);
-
-      close(NewSqdHandle);
-      close(NewSqiHandle);
-      close(SqdHandle);
+           if (stop==0 && sqhdr.msg_length <= XMSG_SIZE) {
+               
+               fprintf(stderr, "\nMessage body is too short: %d\n",sqhdr.msg_length);
+               
+               if ( tryfind ) {
+                   stop = findhdr(SqdHandle);
+                   continue;
+               }else{
+                   fprintf(stderr, "\nYou may want to use -f parameter\n");
+                   stop++;
+               }
+           }
+           
+           if (stop==0 && sqhdr.frame_length > maxMsgLen) {
+               
+               fprintf(stderr, "\nFrame is larger than rest of file\nLooks like Message header is damaged\n");
+               
+               if ( tryfind ) {
+                   stop = findhdr(SqdHandle);
+                   continue;
+               }else{
+                   fprintf(stderr, "\nYou may want to use -f parameter\n");
+                   stop++;
+               }
+           }
+           
+           
+           if (!stop) {
+               if (sqhdr.frame_type != FRAME_normal) {
+                   if (unDelete != 0 && sqhdr.frame_type == FRAME_free) {
+                       sqhdr.frame_type = FRAME_normal;
+                       fprintf(stderr, "... free, restoring\n");
+                   } else {
+                       sayFree = 1;
+                       fprintf(stderr, "... free\r");
+                       lseek(SqdHandle, sqhdr.frame_length, SEEK_CUR);
+                       continue;
+                   }
+               }
+               
+               read_xmsg(SqdHandle, &xmsg);
+               
+               text = (char*)calloc(sqhdr.frame_length, sizeof(char*));
+               farread(SqdHandle, text, (sqhdr.frame_length - XMSG_SIZE));
+               memcpy(text,text,sqhdr.msg_length);
+               if (firstmsg) {
+                   sqhdr.prev_frame = 0;
+                   firstmsg=0;
+               } else {
+                   sqhdr.prev_frame = sqbase.last_frame;
+               } /* endif */
+               
+               sqhdr.next_frame = tell(NewSqdHandle) + SQHDR_SIZE + sqhdr.msg_length;
+               
+               sqbase.last_frame = tell(NewSqdHandle);
+               sqidx.ofs = sqbase.last_frame;
+               
+               
+               write_sqhdr(NewSqdHandle, &sqhdr);
+               write_xmsg(NewSqdHandle, &xmsg);
+               farwrite(NewSqdHandle, text, (sqhdr.msg_length - XMSG_SIZE));
+               
+               sqbase.end_frame = tell(NewSqdHandle);
+               
+               sqidx.hash = SquishHash(xmsg.to);
+               if (xmsg.attr & MSGREAD) {
+                   sqidx.hash |= (dword) 0x80000000L;
+               }
+               sqidx.umsgid = sqbase.num_msg+1;
+               
+               write_sqidx(NewSqiHandle, &sqidx, 1);
+               free(text);
+               
+               sqbase.num_msg++;
+               sqbase.high_msg = sqbase.num_msg;
+               saved++;
+               if (sayFree) {
+                   fprintf(stderr, "        ");
+                   sayFree=0;
+               }
+               fprintf(stderr, "\r");
+               
+               maxMsgLen -= sqhdr.frame_length;
+               
+           }
+           
+       } /* endfor */
+       
+       fprintf(stderr, "\n%ld messages read\n", i-2);
+       
+       lseek(NewSqiHandle, SQIDX_SIZE, SEEK_END);
+       read_sqidx(NewSqiHandle, &sqidx, 1);
+       lseek(NewSqdHandle, sqidx.ofs, SEEK_SET);
+       read_sqhdr(NewSqdHandle, &sqhdr);
+       sqhdr.next_frame = 0;
+       lseek(NewSqdHandle, sqidx.ofs, SEEK_SET);
+       write_sqhdr(NewSqdHandle, &sqhdr);
+       lseek(NewSqdHandle, 0L, SEEK_SET);
+       write_sqbase(NewSqdHandle, &sqbase);
+       
+       unlock(SqdHandle, 0, 1);
+       
+       close(NewSqdHandle);
+       close(NewSqiHandle);
+       close(SqdHandle);
    } else {
-      close(NewSqdHandle);
-      close(NewSqiHandle);
-      close(SqdHandle);
-
+       close(NewSqdHandle);
+       close(NewSqiHandle);
+       close(SqdHandle);
+       
    } /* endif */
-
+   
    free(sqd);
    free(newsqd);
    free(newsqi);
-
+   
    fprintf(stderr, "%ld messages saved\n", saved);
-
-return 0;
+   
+   return 0;
 }
 
 
