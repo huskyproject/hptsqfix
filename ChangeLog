@@ -1,3 +1,20 @@
+2003-02-26 Wednesday 06:15  stas_degteff
+
+	* INSTALL (1.1): Installation instructions
+
+2003-02-26 Wednesday 06:15  stas_degteff
+
+	* VERSION (1.2): hptsqfix don't require fidoconfig
+
+2003-02-26 Wednesday 05:56  stas_degteff
+
+	* src/hptsqfix.c (1.14): Use compiler-specific defines from
+	compiler.h
+
+2003-02-26 Wednesday 03:59  sfpavel
+
+	* src/hptsqfix.c (1.13): Update version to 1.9-current
+
 2003-02-20 Thursday 09:19  sfpavel
 
 	* HISTORY (1.2): Merge HISTORY with stable
