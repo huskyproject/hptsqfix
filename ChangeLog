@@ -1,3 +1,8 @@
+2004-02-08 Sunday 22:09  d_sergienko
+
+	* Makefile (hptsqfix-1_4-stable.2): fix building (GenVersionStr
+	missing)
+
 2004-01-26 Monday 05:09  andr_lukyanov
 
 	* make/: makefile.cyg, makefile.djg, makefile.emx, makefile.mvc,
