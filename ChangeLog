@@ -1,3 +1,22 @@
+2004-01-26 Monday 05:09  andr_lukyanov
+
+	* make/: makefile.cyg, makefile.djg, makefile.emx, makefile.mvc,
+	makefile.mvcdll, makefile.wco, makefile.wcw
+	(hptsqfix-1_4-stable.[1,1,1,1,1,1,1]): Small compilation fix
+
+2004-01-23 Friday 04:41  andr_lukyanov
+
+	* h/version.h (hptsqfix-1_4-stable.2): Fix stdout version strings
+
+2004-01-23 Friday 04:38  andr_lukyanov
+
+	* h/version.h, src/hptsqfix.c (hptsqfix-1_4-stable.[1,2]): Fix
+	stdout version strings
+
+2004-01-14 Wednesday 03:25  andr_lukyanov
+
+	* h/version.h (1.1): Small fix - remove include fidoconf/version.h
+
 2003-09-18 Thursday 10:39  sfpavel
 
 	* Makefile (hptsqfix-1_4-stable.1): Fix static building
