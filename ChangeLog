@@ -1,3 +1,7 @@
+2002-11-20 Wednesday 09:53  stas_degteff
+
+	* make/makefile.djg (1.2): Fix clean
+
 2002-11-12 Tuesday 06:05  stas_degteff
 
 	* src/hptsqfix.c (1.12): Remove unused variable 'num_msg'
