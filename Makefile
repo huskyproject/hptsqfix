@@ -1,8 +1,11 @@
-# include Husky-Makefile-Config
-include ../huskymak.cfg
+# Generic Makefile for hptsqfix
 
-OBJS    = hptsqfix$(OBJ)
-SRC_DIR = src/
+ifeq ($(DEBIAN), 1)
+# Every Debian-Source-Paket has one included.
+include debian/huskymak.cfg
+else
+include ../huskymak.cfg
+endif
 
 ifeq ($(DEBUG), 1)
   CFLAGS = $(DEBCFLAGS) -Ih -I$(INCDIR) $(WARNFLAGS)
@@ -18,9 +21,12 @@ else
   LIBS  = -L$(LIBDIR) -lfidoconfig -lsmapi
 endif
 
-CDEFS=-D$(OSTYPE) $(ADDCDEFS)
+CDEFS=-D$(OSTYPE) -DUNAME=\"$(UNAME)\" $(ADDCDEFS)
 
-all: $(OBJS) hptsqfix$(EXE)
+OBJS    = hptsqfix$(OBJ)
+SRC_DIR = src/
+
+all: $(OBJS) hptsqfix$(EXE) man
 
 %$(OBJ): $(SRC_DIR)%.c
 		$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
@@ -28,17 +34,28 @@ all: $(OBJS) hptsqfix$(EXE)
 hptsqfix$(EXE): $(OBJS)
 		$(CC) $(LFLAGS) -o hptsqfix$(EXE) $(OBJS) $(LIBS)
 
+man: man/hptsqfix.1
+	gzip -9c man/hptsqfix.1 > hptsqfix.1.gz
+
 clean:
-		-$(RM) $(RMOPT) *$(OBJ)
-		-$(RM) $(RMOPT) *~
-		-$(RM) $(RMOPT) core
-		-$(RM) $(RMOPT) hptsqfix$(EXE)
+	-$(RM) $(RMOPT) *$(OBJ)
+	-$(RM) $(RMOPT) *~
+	-$(RM) $(RMOPT) core
+	-$(RM) $(RMOPT) hptsqfix$(EXE)
 
 distclean: clean
-		-$(RM) $(RMOPT) hptsqfix$(EXE)
+	-$(RM) $(RMOPT) hptsqfix$(EXE)
+	-$(RM) $(RMOPT) hptsqfix.1.gz
 
-install: hptsqfix$(EXE)
+install: all
 		$(INSTALL) $(IBOPT) hptsqfix$(EXE) $(BINDIR)
+ifdef MANDIR
+	-$(MKDIR) $(MKDIROPT) $(MANDIR)$(DIRSEP)man1
+	$(INSTALL) $(IMOPT) hptsqfix.1.gz $(MANDIR)$(DIRSEP)man1
+endif
 
 uninstall:
-		$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hptsqfix$(EXE)
+	$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)hptsqfix$(EXE)
+ifdef MANDIR
+	$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hptsqfix.1.gz
+endif
