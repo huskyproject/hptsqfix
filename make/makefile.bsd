@@ -1,0 +1,21 @@
+CC       = gcc
+CFLAGS   = -c -g -O2 -DUNIX -I../h -I../..
+LFLAGS   = -s -L../../fidoconf -L../../smapi
+
+OBJS    = hptsqfix.o
+SRC_DIR = ../src/
+
+all: $(OBJS) \
+	hptsqfix
+
+%.o: $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+
+hptsqfix: $(OBJS)
+	$(CC) $(LFLAGS) -o hptsqfix $(OBJS) -lsmapibsd -lfidoconfigbsd
+
+clean:
+	-rm -f *.o
+	-rm -f *~
+	-rm -f hptsqfix
+	-rm -f core
