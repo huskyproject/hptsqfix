@@ -1,0 +1,87 @@
+
+Please read the files (especially README.Makefiles) in the
+husky-common (huskybse) package FIRST! If you don't have this package you
+should download it from http://husky.sourceforge.net/
+
+
+Instructions to build HPTSQFIX from sources.
+---------------------------------------
+
+0. The smapi package is required for the hptsqfix package. They
+   must be already compiled (and installed if uses shared libraries).
+   This library must be the exactly same version as hptsqfix (and date for
+   -current branch).
+
+1. Put the hptsqfix package in the directory where the other packages of fido
+   husky reside:
+
+   unix, beos, cygwin:
+   -------------------
+   /usr/src/packages/        -> huskybse/
+                             -> smapi/
+                             -> hptsqfix/
+                             ...some other
+
+   windows, dos, os/2 & etc:
+   -------------------------
+   d:\husky\                 -> smapi\
+                             -> hptsqfix\
+                             ...some other
+
+2. Determine which makefile you need to use then compile (and install if need)
+   hptsqfix using selected makefile, as following examples:
+   Example 1 (use common makefile (named 'Makefile'): require huskymak.cfg (see
+              huskybse); unixes only):
+	$ make
+	$ make install
+   Example 2 (use platfom-specific makefile from make subdirectory):
+   linux:
+        $ cd make
+	$ make -f makefile.lnx
+	$ make -f makefile.lnx install
+   dos (DJGPP GCC):
+        d:\husky\hptsqfix\make>make -f makefile.djg
+   windows (MS Visual C/C++):
+        d:\husky\hptsqfix\make>nmake -f makefile.mvc
+
+
+You're ready.
+
+
+Instructions to use precompiled binary packages.
+------------------------------------------------
+
+0. The smapi package is required for the hptsqfix package (if you get win32
+   DLL version or unix shared-library version), they must be already
+   compiled and installed.
+   This library must be the exactly same version as hptsqfix (and date for
+   -current branch).
+
+1. If you already have precompiled binaries - just unpack packages:
+   smapi and hptsqfix. All unpack into same directory!
+
+
+You're ready.
+
+
+Appendix A. Supported compilers
+-------------------------------
+
+The following makefiles can be used to compile this release of hptsqfix:
+
+Makefile          Compiler and platform
+------------      ------------------------------------------------------------
+Makefile          Any (huskymak.cfg required), use GNU make
+makefile.cyg      GNU C 2.9.3-3.2.1 for Cygwin (mingw32 binaries, static & dll)
+makefile.djg      GNU C 2.7.x for MS-DOS (DJGPP)
+makefile.emx      GNU C 2.7.x for OS/2 (EMX 0.9) a.out-style linkage (EMX rt)
+makefile.lnx      GNU C 2.7.x for Linux
+makefile.mgw      Mingw32 for NT
+makefile.mvc      Microsoft Visual C/C++ 6.0
+makefile.mvcdll   Microsoft Visual C/C++ 6.0 (using shared libraries)
+makefile.sun      GNU C 2.7.x for Solaris
+makefile.wco      WATCOM C/C++ 10.x for 32-bit OS/2
+makefile.wcw      WATCOM C/C++ 10.x for 32-bit Windows
+------------      ------------------------------------------------------------
+
+$Id$
