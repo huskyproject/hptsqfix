@@ -1,0 +1,34 @@
+# $Id$
+#
+# Legacy makefile for DOS DPMI
+# Do not support husky build enviroment
+
+CC      = gcc
+CFLAGS	= -I../h -I../.. -Wall -c -DNOSEMAPHORES
+COPT	= -O3 -mcpu=i486
+LFLAGS	= -s -L../../smapi
+
+
+OBJS    = hptsqfix.o
+SRC_DIR = ../src/
+
+LINKSMAPI=../../smapi/smapidjg.a
+
+all: $(OBJS) hptsqfix.exe
+
+%.o: $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+
+hptsqfix.exe: $(OBJS)
+	$(CC) $(LFLAGS) -o hptsqfix.exe $(OBJS) $(LINKSMAPI)
+
+clean:
+	-rm -f *.o
+	-rm *~
+	-rm 
+	-rm hptsqfix.exe
+
+distclean: clean
+	-rm hptsqfix.exe
+	-rm *.1.gz
+	-rm *.log

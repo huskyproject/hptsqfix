@@ -1,0 +1,34 @@
+# $Id$
+#
+# Legacy makefile for IBM OS/2 + EMX Runtime library
+# Do not support husky build enviroment
+
+CC     = gcc
+CFLAGS = -DOS2 -I../h -I../.. -c -O3
+COPT   = -O2
+LFLAGS = -Zcrtdll
+
+
+OBJS    = hptsqfix.o
+SRC_DIR = ../src/
+
+LINKSMAPI=../../smapi/smapiemx.a
+
+all: $(OBJS) hptsqfix.exe
+
+%.o: $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+
+hptsqfix.exe: $(OBJS)
+	$(CC) $(LFLAGS) -o hptsqfix.exe $(OBJS) $(LINKSMAPI)
+
+clean:
+	-rm -f *.o
+	-rm *~
+	-rm 
+	-rm hptsqfix.exe
+
+distclean: clean
+	-rm hptsqfix.exe
+	-rm *.1.gz
+	-rm *.log
