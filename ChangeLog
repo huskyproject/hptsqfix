@@ -91,8 +91,8 @@
 2002-10-04 Friday 06:10  sfpavel
 
 	* make/: makefile.djg (1.1), makefile.emx (1.1) (utags:
-	hptsqfix-1_2_2-release, hptsqfix-1_2_4-release,
-	hptsqfix-1_2-release): Add makefiles for DJGPP and OS2/EMX
+	hptsqfix-1_2-release, hptsqfix-1_2_4-release,
+	hptsqfix-1_2_2-release): Add makefiles for DJGPP and OS2/EMX
 
 2002-09-24 Tuesday 03:50  nssoft
 
