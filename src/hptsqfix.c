@@ -226,7 +226,7 @@ int repair(char *areaName)
         
         for (stop = 0, i = 1; !stop; i++) {
             
-            fprintf(stderr, "Msg %d", i);
+            fprintf(stderr, "Msg %ld", i);
             
             if (read_sqhdr(SqdHandle, &sqhdr) == 0) {
                 fprintf(stderr, "... end");
@@ -234,7 +234,7 @@ int repair(char *areaName)
             }
             
             if(sqhdr.frame_length != sqhdr.msg_length)
-                fprintf(stderr, "\nFrame Length != Msg Length %d:%d\n",sqhdr.frame_length ,sqhdr.msg_length); 
+                fprintf(stderr, "\nFrame Length != Msg Length %ld:%ld\n",sqhdr.frame_length ,sqhdr.msg_length); 
             
             if (stop==0 && sqhdr.id != SQHDRID) {
                 
@@ -251,7 +251,7 @@ int repair(char *areaName)
             
             if (stop==0 && sqhdr.msg_length <= XMSG_SIZE) {
                 
-                fprintf(stderr, "\nMessage body is too short: %d\n",sqhdr.msg_length);
+                fprintf(stderr, "\nMessage body is too short: %ld\n",sqhdr.msg_length);
                 
                 if ( tryfind ) {
                     stop = findhdr(SqdHandle);
