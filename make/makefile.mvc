@@ -1,24 +1,69 @@
 # $Id$
 #
-# Microsoft Visual C++ Makefile for build hptsqfix static library
+# Microsoft Visual C++ Makefile for build static program(s)
+# No support for the Husky build environment.
+#
+# Tested on MS Visual C 6.0
+#
+include makefile.inc
 
+## programs ##
 CC	= cl
+AR	= lib
+LINK	= link
+RANLIB	=
+RM	= del
+
+## file suffixes ##
+_C	  = .c
+_OBJ	  = .obj
+_EXP	  = .exp
+_LIB	  = .lib
+_DLL	  = .dll 
+_EXE	  = .exe
+
+## programs ##
 CFLAGS	= -nologo -Zp1
-CINCL	= -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib
-CDEFS	= -D__NT__ -DNT -DWINNT -D_CONSOLE
-COPT	= -O2
-TLIB	= lib -nologo
+CINCL	= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib
+CDEFS	= -D__NT__ -DNT -DWINNT -DWIN32 -D_CONSOLE
+COPT	= -Ob2
 
-LIBS	= ..\..\huskylib\make\huskymvc.lib ..\..\smapi\make\smapimvc.lib
+EXENAMEFLAG = -Fe
 
-all: hptsqfix.exe
+LIBS	= ..\..\fidoconf\make\fconfmvc.lib ..\..\smapi\make\smapimvc.lib \
+	  ..\..\huskylib\make\huskymvc.lib
 
-hptsqfix.exe:
-        $(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) \
-	-Fe$@ ..\src\hptsqfix.c $(LIBS)
+default:
+	@echo Run 'make programs' to build static version of programs ($(PROGRAMS))
+	@echo Run 'make all' to build all above
+
+all: programs
+programs: $(PROGRAMS)
+
+{$(_SRC_DIR)}$(_C)$(_OBJ):
+	@$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) -c $<
+
+$(PROGRAMS): $(OBJS)
+	@echo Create $(PROGRAMS)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $** $(LIBS)
+
+man:
+
+doc: man
+	man2html$(_EXE) <..\$(LIBNAME).1 >$(LIBNAME).html
 
 clean:
-	-del *.obj
+	-$(RM) $(RMOPT) *$(_OBJ)
 
 distclean: clean
-	-del *.exe
+	-$(RM) $(RMOPT) $(PROGRAMS)
+	-$(RM) $(RMOPT) $(LIBNAME).html
+
+install: programs doc
+	$(INSTALL) $(IBOPT) $(PROGRAMS) $(BINDIR)
+	$(INSTALL) $(IBOPT) ..\$(LIBNAME).1 $(DOCDIR)
+	$(INSTALL) $(IBOPT) $(LIBNAME).html $(DOCDIR)
+
+uninstall:
+	-$(RM) $(RMOPT) $(BINDIR)\$(PROGRAMS)
+	-$(RM) $(RMOPT) $(DOCDIR)\$(LIBNAME).html
