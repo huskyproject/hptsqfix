@@ -15,6 +15,10 @@ else
   LFLAGS = $(OPTLFLAGS)
 endif
 
+ifneq ($(DYNLIBS), 1)
+  LFLAGS += -static -lc
+endif
+
 LIBS  = -L$(LIBDIR) -lsmapi
 
 CDEFS=-D$(OSTYPE) -DUNAME=\"$(UNAME)\" $(ADDCDEFS)
