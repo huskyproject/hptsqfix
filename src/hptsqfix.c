@@ -44,7 +44,7 @@
 #include <smapi/msgapi.h>
 #include <squish.h>
 
-#define VERSION	"1.3.0"
+#define VERSION	"1.4.0-stable"
 #include "cvsdate.h"
 
 #define fop_wpb (O_CREAT | O_TRUNC | O_RDWR | O_BINARY)

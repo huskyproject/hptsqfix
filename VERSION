@@ -1,3 +1,3 @@
-hptsqfix 1.9-current
-cvs tag: HEAD
-required: smapi 2.5-current, fidoconfig 1.9-current
+hptsqfix 1.4.0-stable
+cvs tag: hptsqfix-1_4-stable
+required: smapi 2.4-stable, fidoconfig 1.4-stable
