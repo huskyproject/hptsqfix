@@ -6,7 +6,6 @@
 #export DH_VERBOSE=1
 
 # This is the debhelper compatibility version to use.
-export DH_COMPAT=4
 export DEBIAN=1
 export PACKAGE=hptsqfix
 # Next Line to build debug-versions !
