@@ -1,3 +1,8 @@
+2003-01-05 Sunday 09:26  sfpavel
+
+	* debian/changelog (tags: hptsqfix-1_2_2-release)
+	(hptsqfix-1_2-stable.3): Update debian version
+
 2002-12-30 Monday 10:31  stas_degteff
 
 	* src/hptsqfix.c (hptsqfix-1_2-stable.4): Change version to
@@ -15,9 +20,8 @@
 
 2002-11-06 Wednesday 08:28  sfpavel
 
-	* debian/changelog (tags: hptsqfix-1_2_2-release), src/hptsqfix.c
-	(hptsqfix-1_2-stable.[2,2]) (utags: hptsqfix-1_2-release): New
-	debian package
+	* debian/changelog, src/hptsqfix.c (hptsqfix-1_2-stable.[2,2])
+	(utags: hptsqfix-1_2-release): New debian package
 
 2002-10-04 Friday 18:17  sfpavel
 
