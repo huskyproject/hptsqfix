@@ -83,14 +83,14 @@ typedef struct
 
 #define SQIDX_SIZE 12
 
-int read_xmsg(sword handle, XMSG *pxmsg);
-int write_xmsg(sword handle, XMSG *pxmsg);
-int read_sqhdr(sword, SQHDR *);
-int write_sqhdr(sword, SQHDR *);
-int read_sqidx(sword, SQIDX *, dword);
-int write_sqidx(sword, SQIDX *, dword);
-int read_sqbase(sword handle, struct _sqbase *psqbase);
-int write_sqbase(sword handle, struct _sqbase *psqbase);
+int read_xmsg(int handle, XMSG *pxmsg);
+int write_xmsg(int handle, XMSG *pxmsg);
+int read_sqhdr(int, SQHDR *);
+int write_sqhdr(int, SQHDR *);
+int read_sqidx(int, SQIDX *, dword);
+int write_sqidx(int, SQIDX *, dword);
+int read_sqbase(int handle, struct _sqbase *psqbase);
+int write_sqbase(int handle, struct _sqbase *psqbase);
 
 #endif
 
