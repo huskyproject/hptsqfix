@@ -1,3 +1,7 @@
+2005-03-20 Sunday 01:47  sfpavel
+
+	* debian/changelog (hptsqfix-1_4-stable.8): 1.4-RC3 release
+
 2004-06-07 Monday 11:33  sfpavel
 
 	* debian/: changelog, compat, control, rules
