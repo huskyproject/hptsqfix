@@ -1,3 +1,22 @@
+2003-02-11 Tuesday 12:28  sfpavel
+
+	* debian/changelog (hptsqfix-1_4-stable.2): Change debian version
+	to 1.4.0-beta1
+
+2003-02-11 Tuesday 10:03  sfpavel
+
+	* debian/: changelog, control, docs (hptsqfix-1_4-stable.[1,1,1]):
+	New debian package
+
+2003-02-11 Tuesday 09:58  sfpavel
+
+	* HISTORY, VERSION, src/hptsqfix.c (hptsqfix-1_4-stable.[1,1,1]):
+	Set version to 1.4.0-stable
+
+2003-02-11 Tuesday 09:49  sfpavel
+
+	* HISTORY (1.1), VERSION (1.1): Add HISTORY and VERSION
+
 2003-02-07 Friday 09:54  sfpavel
 
 	* Makefile (1.6), debian/changelog (1.5), debian/control (1.2),
