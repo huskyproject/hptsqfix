@@ -15,7 +15,7 @@ all: $(OBJS) hptsqfix.exe
 %.o: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
 
-hpucode.exe: $(OBJS)
+hptsqfix.exe: $(OBJS)
 	$(CC) $(LFLAGS) -o hptsqfix.exe $(OBJS) $(LINKSMAPI)
 
 clean:
