@@ -1,3 +1,8 @@
+2003-05-27 Tuesday 09:39  d_sergienko
+
+	* make/makefile.bsd (1.1): file makefile.bsd was initially added on
+	branch hptsqfix-1_2-stable.
+
 2003-05-14 Wednesday 15:32  nssoft
 
 	* Makefile (1.9): Change OBJ to _OBJ and EXE to _EXE.
