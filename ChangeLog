@@ -1,3 +1,8 @@
+2003-02-19 Wednesday 06:24  sfpavel
+
+	* debian/: changelog, control, rules (hptsqfix-1_4-stable.[3,2,1]):
+	New debian version - change section to main
+
 2003-02-11 Tuesday 12:28  sfpavel
 
 	* debian/changelog (hptsqfix-1_4-stable.2): Change debian version
