@@ -1,0 +1,59 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH HPTSQFIX 1 "hptsqfix" "20 September 2002" "Husky - Portable Fidonet Software"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+hptsqfix \- program to rebuild index and some info in squish message bases
+.SH SYNOPSIS
+.B hptsqfix
+.RI [ options ]
+areafilename ...
+.SH DESCRIPTION
+.B hptsqfix
+is a program that found and correct errors in squish message bases.
+It read broken msgbase file
+.I <areafilename>.sqd
+and build new msgbase files:
+.I <areafilename>.tmd
+and
+.I <areafilename>.tmi.
+.br
+After repair you must backup old
+.I <areafilename>.sq*
+files and rename
+.I <areafilename>.tm*
+to
+.I <areafilename>.sq*
+.SH OPTIONS
+.TP
+.B \-f
+try to find next header after broken msg.
+.TP
+.B \-e
+areafilename has extension, strip it.
+.TP
+.B \-u
+undelete (restore deleted messages).
+.TP
+.B \-s
+sort messages by date written.
+.SH NOTES
+All Husky-Software is written by various developers. For detailed information
+about the Husky-Team take a look at 
+http://husky.sourceforge.net/team.html.
+.SH AUTHOR
+This manual page was written by Pavel Andreew <pavel@collage.etel.ru>,
+for the Debian GNU/Linux system (but may be used by others).
