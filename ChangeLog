@@ -1,3 +1,9 @@
+2003-02-07 Friday 09:54  sfpavel
+
+	* Makefile (1.6), debian/changelog (1.5), debian/control (1.2),
+	debian/copyright (1.2), debian/huskymak.cfg (1.2): New debian
+	version
+
 2002-12-30 Monday 10:37  stas_degteff
 
 	* make/makefile.cyg (1.4): cosmetic fix
