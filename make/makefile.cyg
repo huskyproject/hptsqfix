@@ -1,5 +1,5 @@
 CC      = gcc
-CFLAGS=	-DNT -D__NT__ -DWINNT -D__CYG__ -I../h -I.. -Wall -pedantic -c -Wno-char-subscripts -mno-cygwin
+CFLAGS=	-DNT -D__NT__ -DWINNT -D__CYG__ -I../h -I../.. -Wall -pedantic -c -Wno-char-subscripts -mno-cygwin
 COPT=	-O2
 LFLAGS=-mno-cygwin
 
@@ -7,7 +7,7 @@ LFLAGS=-mno-cygwin
 OBJS    = hptsqfix.o
 SRC_DIR = ../src/
 
-LINKSMAPI=../../smapi/libsmapicyg.a /lib/w32api/libuser32.a
+LINKSMAPI=../../smapi/libsmapicyg.a
 #LINKFIDOC=../../fidoconf/libfidoconfigcyg.a
 
 all: $(OBJS) hptsqfix.exe
