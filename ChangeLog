@@ -1,3 +1,7 @@
+2003-03-09 Sunday 04:33  nssoft
+
+	* Makefile (1.7), src/hptsqfix.c (1.15): link with huskylib
+
 2003-02-26 Wednesday 06:15  stas_degteff
 
 	* INSTALL (1.1): Installation instructions
