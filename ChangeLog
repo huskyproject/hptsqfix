@@ -1,3 +1,12 @@
+2003-09-18 Thursday 10:39  sfpavel
+
+	* Makefile (hptsqfix-1_4-stable.1): Fix static building
+
+2003-09-18 Thursday 06:28  sfpavel
+
+	* debian/changelog (hptsqfix-1_4-stable.6): New stable version:
+	1.4-RC2
+
 2003-05-21 Wednesday 08:56  sfpavel
 
 	* debian/control (hptsqfix-1_4-stable.3): Change debian
