@@ -1,35 +1,35 @@
 # $Id$
-#
-# Legacy makefile for IBM OS/2 + EMX Runtime library
-# Do not support husky build enviroment
+# Makefile to build HPTSQFIX/OS2 with gcc 3.x.x from EMX v0.9d.
+# No support for the Husky build environment.
 
-CC     = gcc
-CFLAGS = -DOS2 -c -O3
-CINCL	= -I../h -I../../fidoconf -I../../smapi -I../../huskylib
-COPT   = -O2
-LFLAGS = -Zcrtdll
+# include Husky-Makefile-Config,
+# copy this file from ../../huskybse/huskymak.cfg.emx
+include ../../huskymak.cfg
 
+include makefile.inc
 
-OBJS    = hptsqfix.o
-SRC_DIR = ../src/
+# includes directories
+CINCL= -I$(H_DIR) -I../../huskylib -I../../smapi -I../../fidoconf
 
-LIBS	= ../../huskylib/make/huskyemx.a ../../smapi/make/smapiemx.a
+# libraries need to build binary file
+LIBS	= ../../fidoconf/make/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
+	  ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
+	  ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
 
-all: $(OBJS) hptsqfix.exe
+READMEFILES= ../ChangeLog.old ../ChangeLog ../VERSION ../INSTALL ../HISTORY ../COPYING
 
-%.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CINCL) $(SRC_DIR)$*.c
+default:
+	@echo Run 'make programs' to build static version of programs ($(PROGRAMS))
+	@echo Run 'make all' to build all above
 
-hptsqfix.exe: $(OBJS)
-	$(CC) $(LFLAGS) -o hptsqfix.exe $(OBJS) $(LIBS)
+all:	programs
 
-clean:
-	-rm -f *.o
-	-rm *~
-	-rm 
-	-rm hptsqfix.exe
+programs: $(PROGRAMS)
 
-distclean: clean
-	-rm hptsqfix.exe
-	-rm *.1.gz
-	-rm *.log
+%$(_OBJ): $(_SRC_DIR)%$(_C)
+	@echo Compiling $<
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(OPTCFLAGS) $<
+
+$(PROGRAMS): $(OBJS)
+	@echo Create $(PROGRAMS)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)

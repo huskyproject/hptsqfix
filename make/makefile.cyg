@@ -1,34 +1,37 @@
 # $Id$
-#
-# Legacy makefile for Cygwin compilation
-# Do not use Husky build enviroment (dont require huskymak.cfg)
+# Makefile to build HPTSQFIX/win32 with Mingw32 from Cygwin.
+# No support for the Husky build environment.
 
-CC	= gcc
-CFLAGS	= -D__NT__ -Wall -pedantic -c -Wno-char-subscripts -mno-cygwin
-CINCL	= -I../h -I../../fidoconf -I../../smapi -I../../huskylib
-COPT	= -O2
-LFLAGS	= -mno-cygwin
+# include Husky-Makefile-Config,
+# copy this file from ../../huskybse/huskymak.cfg.cyg
+include ../../huskymak.cfg
 
+include makefile.inc
 
-OBJS    = hptsqfix.o
-SRC_DIR = ../src/
+# includes directories
+CINCL= -I$(H_DIR) -I../../huskylib -I../../smapi -I../../fidoconf
 
-LIBS	= ../../huskylib/make/huskycyg.a ../../smapi/make/libsmapicyg.a
+# libraries need to build binary file
+LIBS	= ../../fidoconf/make/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
+	  ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
+	  ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
 
-TARGET	= hptsqfix.exe
+READMEFILES= ../ChangeLog.old ../ChangeLog ../VERSION ../INSTALL ../HISTORY ../COPYING
 
-all: $(TARGET)
+default:
+	@echo
+	@echo Run \'make programs\' to build static version of programs \($(PROGRAMS)\)
+	@echo
+	@echo Run \'make all\' to build all above
 
-%.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CINCL) $(SRC_DIR)$*.c
+all:	programs
 
-$(TARGET): $(OBJS)
-	$(CC) $(LFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
+programs: $(PROGRAMS)
 
-clean:
-	-rm -f *.o
-	-rm *.log
+%$(_OBJ): $(_SRC_DIR)%$(_C)
+	@echo Compiling $<
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(OPTCFLAGS) $<
 
-distclean: clean
-	-rm $(TARGET)
-	-rm *.1.gz
+$(PROGRAMS): $(OBJS)
+	@echo Create $(PROGRAMS)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)

@@ -1,32 +1,38 @@
 # $Id$
-#
-# Legacy makefile for DOS DPMI
-# Do not support husky build enviroment
+# Makefile to build HPTSQFIX/dpmi with gcc 3.x.x from DJGPP v2.03.
+# No support for the Husky build environment.
 
-CC      = gcc
-CFLAGS	= -Wall -c
-CINCL	= -I../h -I../../fidoconf -I../../smapi -I../../huskylib
-COPT	= -O3 -mcpu=i486
-LFLAGS	= -s -L../../smapi/make
+# include Husky-Makefile-Config,
+# copy this file from ../../huskybse/huskymak.cfg.djg
+include ../../huskymak.cfg
 
+include makefile.inc
 
-OBJS    = hptsqfix.o
-SRC_DIR = ../src/
+# includes directories
+CINCL= -I$(H_DIR) -I../../huskylib -I../../smapi -I../../fidoconf
 
-LIBS	= ../../smapi/make/smapidjg.a ../../huskylib/make/huskydjg.a
+# libraries need to build binary file
+LIBS	= ../../fidoconf/make/$(LIBPREFIX)fconf$(LIBSUFFIX)$(_LIB) \
+	  ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
+	  ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
 
-all: $(OBJS) hptsqfix.exe
+READMEFILES= ../ChangeLog.old ../ChangeLog ../VERSION ../INSTALL ../HISTORY ../COPYING
 
-%.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CINCL) $(SRC_DIR)$*.c
+default:
+	@echo
+	@echo Run \'make programs\' to build static version of programs \($(PROGRAMS)\)
+	@echo
+	@echo Run \'make all\' to build all above
 
-hptsqfix.exe: $(OBJS)
-	$(CC) $(LFLAGS) -o hptsqfix.exe $(OBJS) $(LIBS)
+all:	programs
 
-clean:
-	-rm -f *.o
+programs: $(PROGRAMS)
 
-distclean: clean
-	-rm hptsqfix.exe
-	-rm *.1.gz
-	-rm *.log
+%$(_OBJ): $(_SRC_DIR)%$(_C)
+	@echo Compiling $<
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(OPTCFLAGS) $<
+
+$(PROGRAMS): $(OBJS)
+	@echo Create $(PROGRAMS)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+	@strip$(_EXE) $@
