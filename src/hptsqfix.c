@@ -47,7 +47,7 @@
 #define fop_wpb (O_CREAT | O_TRUNC | O_RDWR | O_BINARY)
 #define fop_rpb (O_RDWR | O_BINARY)
 
-#define VERSION	"v.1.2.2-stable"
+#define VERSION	"v.1.2.4-release"
 
 
 int Open_File(char *name, word mode)
