@@ -1,3 +1,8 @@
+2002-11-06 Wednesday 08:28  sfpavel
+
+	* debian/changelog, src/hptsqfix.c (hptsqfix-1_2-stable.[2,2]): New
+	debian package
+
 2002-10-04 Friday 18:17  sfpavel
 
 	* debian/changelog, debian/control, debian/rules, src/hptsqfix.c
