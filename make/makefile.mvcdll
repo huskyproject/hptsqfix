@@ -52,20 +52,20 @@ $(PROGRAMS): $(OBJS)
 man:
 
 doc: man
-	man2html$(EXE) <..\$(EXENAME).1 >$(EXENAME).html
+	man2html$(_EXE) <..\$(LIBNAME).1 >$(LIBNAME).html
 
 clean:
-	-$(RM) $(RMOPT) *$(OBJ)
+	-$(RM) $(RMOPT) *$(_OBJ)
 
 distclean: clean
-	-$(RM) $(RMOPT) $(TARGET)
-	-$(RM) $(RMOPT) $(EXENAME).html
+	-$(RM) $(RMOPT) $(PROGRAMS)
+	-$(RM) $(RMOPT) $(LIBNAME).html
 
 install: programs doc
-	$(INSTALL) $(IBOPT) $(TARGET) $(BINDIR)
-	$(INSTALL) $(IBOPT) ..\$(EXENAME).1 $(DOCDIR)
-	$(INSTALL) $(IBOPT) $(EXENAME).html $(DOCDIR)
+	$(INSTALL) $(IBOPT) $(PROGRAMS) $(BINDIR)
+	$(INSTALL) $(IBOPT) ..\$(LIBNAME).1 $(DOCDIR)
+	$(INSTALL) $(IBOPT) $(LIBNAME).html $(DOCDIR)
 
 uninstall:
-	-$(RM) $(RMOPT) $(BINDIR)\$(TARGET)
-	-$(RM) $(RMOPT) $(DOCDIR)\$(EXENAME).html
+	-$(RM) $(RMOPT) $(BINDIR)\$(PROGRAMS)
+	-$(RM) $(RMOPT) $(DOCDIR)\$(LIBNAME).html
