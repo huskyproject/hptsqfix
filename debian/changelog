@@ -1,3 +1,9 @@
+hptsqfix (1.2.1-1) stable; urgency=low
+
+  * Hptsqfix 1.2 release
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Wed,  6 Nov 2002 13:24:09 +0500
+
 hptsqfix (1.2.0-2) unstable; urgency=low
 
   * Update debian/rules

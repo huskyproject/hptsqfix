@@ -47,6 +47,9 @@
 #define fop_wpb (O_CREAT | O_TRUNC | O_RDWR | O_BINARY)
 #define fop_rpb (O_RDWR | O_BINARY)
 
+#define VERSION	"v.1.2.1-stable"
+
+
 int Open_File(char *name, word mode)
 {
     int handle;
@@ -64,7 +67,7 @@ int Open_File(char *name, word mode)
 
 void usage()
 {
-    fprintf(stderr, "hptsqfix - squish base repairing utility, v.1.2.0\n");
+    fprintf(stderr, "hptsqfix - squish base repairing utility, %s\n", VERSION);
     fprintf(stderr, "Usage: hptsqfix [-f] [-e] [-u] [-s] areafilename ...\n");
     fprintf(stderr, "                 -f  - try to find next header after broken msg\n");
     fprintf(stderr, "                 -e  - 'areafilename' has extension, strip it\n");
