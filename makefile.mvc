@@ -17,4 +17,4 @@ clean:
 	-del *.obj
 
 distclean: clean
-	-del src\*.exe
+	-del *.exe
