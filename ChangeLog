@@ -1,3 +1,7 @@
+2002-10-22 Tuesday 10:42  sfpavel
+
+	* debian/changelog (1.4): New debian package
+
 2002-10-08 Tuesday 09:55  sfpavel
 
 	* debian/changelog (1.3), src/hptsqfix.c (1.9): New debian package
