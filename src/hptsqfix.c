@@ -86,13 +86,10 @@ int Open_File(char *name, word mode)
 
 void usage()
 {
-    versionStr = GenVersionStr( "hptsqfix", VER_MAJOR, VER_MINOR, VER_PATCH,
-                               VER_BRANCH, cvs_date );
-    printf("%s\n", versionStr);
-    fprintf(stderr, "\nUsage:\thptsqfix [-f] [-e] [-u] areafilename ...\n");
-    fprintf(stderr, "\t-f  - try to find next header after broken msg\n");
-    fprintf(stderr, "\t-e  - 'areafilename' has extension, strip it\n");
-    fprintf(stderr, "\t-u  - undelete (restore deleted messages)\n");
+    printf("Usage: hptsqfix [options] areafilename ...\n"
+    "Options:  -f\t- try to find next header after broken msg\n"
+    "\t  -e\t- 'areafilename' has extension, strip it\n"
+    "\t  -u\t- undelete (restore deleted messages)\n");
     exit(-1);
 }
 /*
@@ -404,6 +401,10 @@ int main(int argc, char *argv[])
     int i, j, extIndx;
     int stripExt=0;
     
+    versionStr = GenVersionStr( "hptsqfix", VER_MAJOR, VER_MINOR, VER_PATCH,
+                               VER_BRANCH, cvs_date );
+    printf("%s\n\n", versionStr);
+
     if (argc < 2) usage();
     
     for (i=1; i<argc; i++) {
