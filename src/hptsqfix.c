@@ -31,7 +31,7 @@
 #include <sys/stat.h>
 
 /* compiler.h */
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
 
 #if defined(HAS_IO_H)
 #include <io.h>
@@ -46,7 +46,6 @@
 #endif
 
 /* smapi */
-#include <smapi/prog.h>
 #include <smapi/msgapi.h>
 
 /* sqpack */

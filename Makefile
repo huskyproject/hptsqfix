@@ -15,7 +15,7 @@ else
   LFLAGS = $(OPTLFLAGS)
 endif
 
-LIBS  = -L$(LIBDIR) -lsmapi
+LIBS  = -L$(LIBDIR) -lsmapi -lhuskylib
 
 CDEFS=-D$(OSTYPE) -DUNAME=\"$(UNAME)\" $(ADDCDEFS)
 
