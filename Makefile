@@ -19,7 +19,7 @@ ifneq ($(DYNLIBS), 1)
   LFLAGS += -static -lc
 endif
 
-LIBS  = -L$(LIBDIR) -lsmapi
+LIBS  = -L$(LIBDIR) -lsmapi -lfidoconfig
 
 CDEFS=-D$(OSTYPE) -DUNAME=\"$(UNAME)\" $(ADDCDEFS)
 
