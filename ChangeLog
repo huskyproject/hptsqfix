@@ -1,3 +1,7 @@
+2003-03-15 Saturday 20:34  d_sergienko
+
+	* Makefile (1.8): fix compilation
+
 2003-03-09 Sunday 04:33  nssoft
 
 	* Makefile (1.7), src/hptsqfix.c (1.15): link with huskylib
