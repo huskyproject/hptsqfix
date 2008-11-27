@@ -1,7 +1,7 @@
 # Microsoft Visual C++ Makefile
 
 CC=     cl
-CFLAGS= -nologo -MD -Zp1 -I..\.. -I..\h
+CFLAGS= -nologo -MD -I..\.. -I..\h
 CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE -D_MAKE_DLL
 COPT=   -O2
 TLIB=   lib -nologo
