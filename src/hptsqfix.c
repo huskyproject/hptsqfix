@@ -34,15 +34,15 @@
 #include <huskylib/compiler.h>
 
 #if defined(HAS_IO_H)
-#include <io.h>
+# include <io.h>
 #endif
 
 #if defined(HAS_SHARE_H)
-#include <share.h>
+# include <share.h>
 #endif
 
 #if defined(HAS_UNISTD_H)
-#include <unistd.h>
+# include <unistd.h>
 #endif
 
 /* smapi */
@@ -56,9 +56,9 @@ char *versionStr;
 #define fop_wpb (O_CREAT | O_TRUNC | O_RDWR | O_BINARY)
 #define fop_rpb (O_RDWR | O_BINARY)
 
-int tryfind=0;
-int unDelete=0;
-size_t     maxMsgLen;
+int tryfind = 0;
+int unDelete = 0;
+size_t maxMsgLen;
 
 /*
 typedef struct {
@@ -69,29 +69,32 @@ typedef struct {
 sortedbase *SortedBase = NULL;
 */
 
-int Open_File(char *name, word mode)
+int Open_File( char *name, word mode )
 {
-    int handle;
-    
+  int handle;
+
 #ifdef __UNIX__
-    handle = sopen(name, mode, SH_DENYNONE, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+  handle =
+    sopen( name, mode, SH_DENYNONE, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH );
 #else
-    handle = sopen(name, mode, SH_DENYNONE, S_IREAD | S_IWRITE);
+  handle = sopen( name, mode, SH_DENYNONE, S_IREAD | S_IWRITE );
 #endif
-    
-    if (handle<0) fprintf(stderr, "Can't open file '%s'\n", name);
-    
-    return handle;
+
+  if( handle < 0 )
+    fprintf( stderr, "Can't open file '%s'\n", name );
+
+  return handle;
 }
 
-void usage()
+void usage(  )
 {
-    printf("Usage: hptsqfix [options] areafilename ...\n"
-    "Options:  -f\t- try to find next header after broken msg\n"
-    "\t  -e\t- 'areafilename' has extension, strip it\n"
-    "\t  -u\t- undelete (restore deleted messages)\n");
-    exit(-1);
+  printf( "Usage: hptsqfix [options] areafilename ...\n"
+          "Options:  -f\t- try to find next header after broken msg\n"
+          "\t  -e\t- 'areafilename' has extension, strip it\n"
+          "\t  -u\t- undelete (restore deleted messages)\n" );
+  exit( -1 );
 }
+
 /*
 static int cmp_msgEntry(const void *a, const void *b)
 {
@@ -105,345 +108,389 @@ static int cmp_msgEntry(const void *a, const void *b)
     return 0;
 }
 */
-int findhdr(int SqdHandle)
+int findhdr( int SqdHandle )
 {
-    off_t pos;
-    dword  i=0, rc=1, stop=0;
-    
-    unsigned char chr;
-    unsigned char sqhdrid[]={0x53, 0x44, 0xae, 0xaf};
-    
-    fprintf(stderr, "Searching valid header ID... ");
-    
-    pos = tell(SqdHandle);
-    
-    
-    do {
-        if (read (SqdHandle, &chr, 1) == 1) {
-            pos++;
-            if (chr == sqhdrid[i]) {
-                i++;
-                if (i==4) {
-                    fprintf(stderr, " Wow! Found at pos %lu\n", (unsigned long) pos-4);
-                    lseek(SqdHandle, pos-4, SEEK_SET);
-                    rc = 0;
-                    stop = 1;
-                }
-            } else {
-                if (chr == sqhdrid[0])
-                    i = 1;
-                else
-                    i = 0;
-            }
-        } else {
-            fprintf(stderr, " not found\n");
-            stop = 1;
-            rc = 1;
-        }
-        
-    } while (!stop);
-    
-    return rc;
-}
+  off_t pos;
+  dword i = 0, rc = 1, stop = 0;
 
-int Checkhdr(int SqdHandle, SQHDR* sqhdr)
-{
-    int stop = 0;
-    
-    if (read_sqhdr(SqdHandle, sqhdr) == 0) {
-        fprintf(stderr, "... end");
-        stop++;
-    }
-    
-    if(stop==0 && sqhdr->frame_length != sqhdr->msg_length)
-        fprintf(stderr, "\nFrame Length != Msg Length %ld:%ld\n",sqhdr->frame_length ,sqhdr->msg_length); 
-    
-    if (stop==0 && sqhdr->id != SQHDRID) {
-        
-        fprintf(stderr, "\nLooks like Message header is damaged\n");
-        
-        if ( tryfind ) {
-            stop = findhdr(SqdHandle);
-            if(stop == 0)
-            stop = -1;
-        }
-        else
-        {
-            fprintf(stderr, "\nYou may want to use -f parameter\n");
-            stop++;
-        }
-    }
-    
-    if (stop==0 && sqhdr->msg_length <= XMSG_SIZE) {
-        
-        fprintf(stderr, "\nMessage body is too short: %ld\n",sqhdr->msg_length);
-        
-        if ( tryfind ) {
-            stop = findhdr(SqdHandle);
-            if(stop == 0)
-            stop = -1;
-        }
-        else
-        {
-            fprintf(stderr, "\nYou may want to use -f parameter\n");
-            stop++;
-        }
-    }
-    
-    if (stop==0 && sqhdr->frame_length > maxMsgLen) {
-        
-        fprintf(stderr, "\nFrame is larger than rest of file\nLooks like Message header is damaged\n");
-        
-        if ( tryfind ) {
-            stop = findhdr(SqdHandle);
-            if(stop == 0)
-            stop = -1;
-        }
-        else
-        {
-            fprintf(stderr, "\nYou may want to use -f parameter\n");
-            stop++;
-        }
-    }
-    return stop;
-}
+  unsigned char chr;
+  unsigned char sqhdrid[] = { 0x53, 0x44, 0xae, 0xaf };
+
+  fprintf( stderr, "Searching valid header ID... " );
+
+  pos = tell( SqdHandle );
 
 
-int repair(char *areaName)
-{
-    
-    int SqdHandle;
-    int NewSqdHandle, NewSqiHandle;
-    dword i;
-    long saved=0;
-    int stop;
-    int firstmsg=1;
-    int sayFree=0;
-    dword frame_length = 0;
-    
-    char *sqd, *newsqd, *newsqi, *text;
-    
-    SQBASE     sqbase;
-    SQHDR      sqhdr;
-    XMSG       xmsg;
-    SQIDX      sqidx;
-    
-    sqd = (char*)malloc(strlen(areaName)+5);
-    
-    newsqd = (char*)malloc(strlen(areaName)+5);
-    newsqi = (char*)malloc(strlen(areaName)+5);
-    
-    sprintf(sqd, "%s%s", areaName, EXT_SQDFILE);
-    
-    SqdHandle = Open_File(sqd, fop_rpb);
-    if (SqdHandle == -1) {
-        free(sqd);
-        free(newsqd);
-        free(newsqi);
-        return 0;
-    } /* endif */
-    
-    sprintf(newsqd, "%s.tmd", areaName);
-    sprintf(newsqi, "%s.tmi", areaName);
-    
-    NewSqdHandle = Open_File(newsqd, fop_wpb);
-    if (NewSqdHandle == -1) {
-        free(sqd);
-        free(newsqd);
-        free(newsqi);
-        close(SqdHandle);
-        return 0;
-    } /* endif */
-    NewSqiHandle = Open_File(newsqi, fop_wpb);
-    if (NewSqiHandle == -1) {
-        free(sqd);
-        free(newsqd);
-        free(newsqi);
-        close(NewSqdHandle);
-        close(SqdHandle);
-        return 0;
-    } /* endif */
-    
-    lseek(SqdHandle, 0L, SEEK_END);
-    maxMsgLen = tell(SqdHandle) - SQBASE_SIZE - SQHDR_SIZE;
-    lseek(SqdHandle, 0L, SEEK_SET);
-    
-    
-    if (lock(SqdHandle, 0, 1) != 0) {
-        close(NewSqdHandle);
-        close(NewSqiHandle);
-        close(SqdHandle);
-        free(sqd);
-        free(newsqd);
-        free(newsqi);
-        fprintf(stderr, "\nCan't lock msg base\n");
-        return 0;
-    }
-    read_sqbase(SqdHandle, &sqbase);
-    
-    sqbase.num_msg = 0;
-    sqbase.high_msg = 0;
-    sqbase.skip_msg = 0;
-    sqbase.begin_frame = SQBASE_SIZE;
-    sqbase.last_frame = sqbase.begin_frame;
-    sqbase.free_frame = sqbase.last_free_frame = 0;
-    sqbase.end_frame = sqbase.begin_frame;
-
-    for (stop = 0, i = 1; !stop; i++)
+  do
+  {
+    if( read( SqdHandle, &chr, 1 ) == 1 )
     {
-        
-        fprintf(stderr, "Msg %ld", i);
-        
-        stop = Checkhdr(SqdHandle, &sqhdr);
-
-        if(stop == 1)
-            break;
-        if(stop == -1)
+      pos++;
+      if( chr == sqhdrid[i] )
+      {
+        i++;
+        if( i == 4 )
         {
-            stop = 0; continue;
+          fprintf( stderr, " Wow! Found at pos %lu\n", ( unsigned long ) pos - 4 );
+          lseek( SqdHandle, pos - 4, SEEK_SET );
+          rc = 0;
+          stop = 1;
         }
-        
-        if (sqhdr.frame_type != FRAME_normal) {
-            if (unDelete != 0 && sqhdr.frame_type == FRAME_free) {
-                sqhdr.frame_type = FRAME_normal;
-                fprintf(stderr, "... free, restoring\n");
-            } 
-            else
-            {
-                sayFree = 1;
-                fprintf(stderr, "... free\r");
-                lseek(SqdHandle, sqhdr.frame_length, SEEK_CUR);
-                continue;
-            }
-        }
-        
-        read_xmsg(SqdHandle, &xmsg);
-        xmsg.attr = 0;
-        xmsg.replyto = 0;
-        memset(xmsg.replies, '\000', sizeof(UMSGID)*MAX_REPLY);	    
+      }
+      else
+      {
+        if( chr == sqhdrid[0] )
+          i = 1;
+        else
+          i = 0;
+      }
+    }
+    else
+    {
+      fprintf( stderr, " not found\n" );
+      stop = 1;
+      rc = 1;
+    }
 
-        text = (char*)calloc(sqhdr.frame_length, sizeof(char*));
-        farread(SqdHandle, text, (sqhdr.frame_length - XMSG_SIZE));
-        memcpy(text,text,sqhdr.msg_length);
-        frame_length       = sqhdr.frame_length;
-        sqhdr.frame_length = sqhdr.msg_length;
-        if (firstmsg) {
-            sqhdr.prev_frame = 0;
-            firstmsg=0;
-        } 
-        else 
-        {
-            sqhdr.prev_frame = sqbase.last_frame;
-        } 
-        
-        sqhdr.next_frame = tell(NewSqdHandle) + SQHDR_SIZE + sqhdr.msg_length;
-        
-        sqbase.last_frame = tell(NewSqdHandle);
-        sqidx.ofs = sqbase.last_frame;
-        
-        write_sqhdr(NewSqdHandle, &sqhdr);
-        write_xmsg(NewSqdHandle, &xmsg);
-        farwrite(NewSqdHandle, text, (sqhdr.msg_length - XMSG_SIZE));
-        
-        sqbase.end_frame = tell(NewSqdHandle);
-        
-        sqidx.hash = SquishHash(xmsg.to);
-        if (xmsg.attr & MSGREAD) {
-            sqidx.hash |= (dword) 0x80000000L;
-        }
-        sqidx.umsgid = sqbase.num_msg+1;
-        
-        write_sqidx(NewSqiHandle, &sqidx, 1);
-        free(text);
-        
-        sqbase.num_msg++;
-        sqbase.high_msg = sqbase.num_msg;
-        saved++;
-        if (sayFree) {
-            fprintf(stderr, "        ");
-            sayFree=0;
-        }
-        fprintf(stderr, "\r");
-        
-        maxMsgLen -= frame_length;
-    } 
+  }
+  while( !stop );
 
-    fprintf(stderr, "\n%ld messages read\n", i-2);
-    
-    lseek(NewSqiHandle, SQIDX_SIZE, SEEK_END);
-    read_sqidx(NewSqiHandle, &sqidx, 1);
-    lseek(NewSqdHandle, sqidx.ofs, SEEK_SET);
-    read_sqhdr(NewSqdHandle, &sqhdr);
-    sqhdr.next_frame = 0;
-    lseek(NewSqdHandle, sqidx.ofs, SEEK_SET);
-    write_sqhdr(NewSqdHandle, &sqhdr);
-    lseek(NewSqdHandle, 0L, SEEK_SET);
-    write_sqbase(NewSqdHandle, &sqbase);
-    
-    unlock(SqdHandle, 0, 1);
-    
-    close(NewSqdHandle);
-    close(NewSqiHandle);
-    close(SqdHandle);
-
-       free(sqd);
-       free(newsqd);
-       free(newsqi);
-       
-       fprintf(stderr, "%ld messages saved\n", saved);
-       
-       return 0;
+  return rc;
 }
 
-
-int main(int argc, char *argv[])
+int Checkhdr( int SqdHandle, SQHDR * sqhdr )
 {
-    int i, j, extIndx;
-    int stripExt=0;
-    
-    versionStr = GenVersionStr( "hptsqfix", VER_MAJOR, VER_MINOR, VER_PATCH,
-                               VER_BRANCH, cvs_date );
-    printf("%s\n\n", versionStr);
+  int stop = 0;
 
-    if (argc < 2) usage();
-    
-    for (i=1; i<argc; i++) {
-        if (argv[i][0] == '-') {
-            if (stricmp(argv[i], "-f")==0) {
-                tryfind = 1;
-            } else if (stricmp(argv[i], "-e")==0) {
-                stripExt = 1;
-            } else if (stricmp(argv[i], "-u")==0) {
-                unDelete = 1;
-            } else {
-                usage();
-            }
-        }
+  if( read_sqhdr( SqdHandle, sqhdr ) == 0 )
+  {
+    fprintf( stderr, "... end" );
+    stop++;
+  }
+
+  if( stop == 0 && sqhdr->frame_length != sqhdr->msg_length )
+    fprintf( stderr, "\nFrame Length != Msg Length %ld:%ld\n", sqhdr->frame_length,
+             sqhdr->msg_length );
+
+  if( stop == 0 && sqhdr->id != SQHDRID )
+  {
+
+    fprintf( stderr, "\nLooks like Message header is damaged\n" );
+
+    if( tryfind )
+    {
+      stop = findhdr( SqdHandle );
+      if( stop == 0 )
+        stop = -1;
     }
-    
-    for (i=1; i<argc; i++) {
-        if (argv[i][0] != '-') {
-            
-            if (stripExt) {
-                extIndx=0;
-                for (j=0; argv[i][j]; j++) {
-                    if (argv[i][j]=='.') extIndx = j;
-                }
-                if (extIndx > 0) {
-                    argv[i][extIndx] = '\0';
-                } else {
-                    fprintf(stderr, "Warning: loose extension in '%s'\n", argv[i]);
-                }
-            }
-            
-            fprintf(stderr, "Repairing area '%s'\n", argv[i]);
-            
-            repair(argv[i]);
-            
-            fprintf(stderr, "Done\n\n");
-        }
+    else
+    {
+      fprintf( stderr, "\nYou may want to use -f parameter\n" );
+      stop++;
     }
-    
-    return 0;
+  }
+
+  if( stop == 0 && sqhdr->msg_length <= XMSG_SIZE )
+  {
+
+    fprintf( stderr, "\nMessage body is too short: %ld\n", sqhdr->msg_length );
+
+    if( tryfind )
+    {
+      stop = findhdr( SqdHandle );
+      if( stop == 0 )
+        stop = -1;
+    }
+    else
+    {
+      fprintf( stderr, "\nYou may want to use -f parameter\n" );
+      stop++;
+    }
+  }
+
+  if( stop == 0 && sqhdr->frame_length > maxMsgLen )
+  {
+
+    fprintf( stderr,
+             "\nFrame is larger than rest of file\nLooks like Message header is damaged\n" );
+
+    if( tryfind )
+    {
+      stop = findhdr( SqdHandle );
+      if( stop == 0 )
+        stop = -1;
+    }
+    else
+    {
+      fprintf( stderr, "\nYou may want to use -f parameter\n" );
+      stop++;
+    }
+  }
+  return stop;
 }
 
+
+int repair( char *areaName )
+{
+
+  int SqdHandle;
+  int NewSqdHandle, NewSqiHandle;
+  dword i;
+  long saved = 0;
+  int stop;
+  int firstmsg = 1;
+  int sayFree = 0;
+  dword frame_length = 0;
+
+  char *sqd, *newsqd, *newsqi, *text;
+
+  SQBASE sqbase;
+  SQHDR sqhdr;
+  XMSG xmsg;
+  SQIDX sqidx;
+
+  sqd = ( char * ) malloc( strlen( areaName ) + 5 );
+
+  newsqd = ( char * ) malloc( strlen( areaName ) + 5 );
+  newsqi = ( char * ) malloc( strlen( areaName ) + 5 );
+
+  sprintf( sqd, "%s%s", areaName, EXT_SQDFILE );
+
+  SqdHandle = Open_File( sqd, fop_rpb );
+  if( SqdHandle == -1 )
+  {
+    free( sqd );
+    free( newsqd );
+    free( newsqi );
+    return 0;
+  }                             /* endif */
+
+  sprintf( newsqd, "%s.tmd", areaName );
+  sprintf( newsqi, "%s.tmi", areaName );
+
+  NewSqdHandle = Open_File( newsqd, fop_wpb );
+  if( NewSqdHandle == -1 )
+  {
+    free( sqd );
+    free( newsqd );
+    free( newsqi );
+    close( SqdHandle );
+    return 0;
+  }                             /* endif */
+  NewSqiHandle = Open_File( newsqi, fop_wpb );
+  if( NewSqiHandle == -1 )
+  {
+    free( sqd );
+    free( newsqd );
+    free( newsqi );
+    close( NewSqdHandle );
+    close( SqdHandle );
+    return 0;
+  }                             /* endif */
+
+  lseek( SqdHandle, 0L, SEEK_END );
+  maxMsgLen = tell( SqdHandle ) - SQBASE_SIZE - SQHDR_SIZE;
+  lseek( SqdHandle, 0L, SEEK_SET );
+
+
+  if( lock( SqdHandle, 0, 1 ) != 0 )
+  {
+    close( NewSqdHandle );
+    close( NewSqiHandle );
+    close( SqdHandle );
+    free( sqd );
+    free( newsqd );
+    free( newsqi );
+    fprintf( stderr, "\nCan't lock msg base\n" );
+    return 0;
+  }
+  read_sqbase( SqdHandle, &sqbase );
+
+  sqbase.num_msg = 0;
+  sqbase.high_msg = 0;
+  sqbase.skip_msg = 0;
+  sqbase.begin_frame = SQBASE_SIZE;
+  sqbase.last_frame = sqbase.begin_frame;
+  sqbase.free_frame = sqbase.last_free_frame = 0;
+  sqbase.end_frame = sqbase.begin_frame;
+
+  for( stop = 0, i = 1; !stop; i++ )
+  {
+
+    fprintf( stderr, "Msg %ld", i );
+
+    stop = Checkhdr( SqdHandle, &sqhdr );
+
+    if( stop == 1 )
+      break;
+    if( stop == -1 )
+    {
+      stop = 0;
+      continue;
+    }
+
+    if( sqhdr.frame_type != FRAME_normal )
+    {
+      if( unDelete != 0 && sqhdr.frame_type == FRAME_free )
+      {
+        sqhdr.frame_type = FRAME_normal;
+        fprintf( stderr, "... free, restoring\n" );
+      }
+      else
+      {
+        sayFree = 1;
+        fprintf( stderr, "... free\r" );
+        lseek( SqdHandle, sqhdr.frame_length, SEEK_CUR );
+        continue;
+      }
+    }
+
+    read_xmsg( SqdHandle, &xmsg );
+    xmsg.attr = 0;
+    xmsg.replyto = 0;
+    memset( xmsg.replies, '\000', sizeof( UMSGID ) * MAX_REPLY );
+
+    text = ( char * ) calloc( sqhdr.frame_length, sizeof( char * ) );
+    farread( SqdHandle, text, ( sqhdr.frame_length - XMSG_SIZE ) );
+    memcpy( text, text, sqhdr.msg_length );
+    frame_length = sqhdr.frame_length;
+    sqhdr.frame_length = sqhdr.msg_length;
+    if( firstmsg )
+    {
+      sqhdr.prev_frame = 0;
+      firstmsg = 0;
+    }
+    else
+    {
+      sqhdr.prev_frame = sqbase.last_frame;
+    }
+
+    sqhdr.next_frame = tell( NewSqdHandle ) + SQHDR_SIZE + sqhdr.msg_length;
+
+    sqbase.last_frame = tell( NewSqdHandle );
+    sqidx.ofs = sqbase.last_frame;
+
+    write_sqhdr( NewSqdHandle, &sqhdr );
+    write_xmsg( NewSqdHandle, &xmsg );
+    farwrite( NewSqdHandle, text, ( sqhdr.msg_length - XMSG_SIZE ) );
+
+    sqbase.end_frame = tell( NewSqdHandle );
+
+    sqidx.hash = SquishHash( xmsg.to );
+    if( xmsg.attr & MSGREAD )
+    {
+      sqidx.hash |= ( dword ) 0x80000000L;
+    }
+    sqidx.umsgid = sqbase.num_msg + 1;
+
+    write_sqidx( NewSqiHandle, &sqidx, 1 );
+    free( text );
+
+    sqbase.num_msg++;
+    sqbase.high_msg = sqbase.num_msg;
+    saved++;
+    if( sayFree )
+    {
+      fprintf( stderr, "        " );
+      sayFree = 0;
+    }
+    fprintf( stderr, "\r" );
+
+    maxMsgLen -= frame_length;
+  }
+
+  fprintf( stderr, "\n%ld messages read\n", i - 2 );
+
+  lseek( NewSqiHandle, SQIDX_SIZE, SEEK_END );
+  read_sqidx( NewSqiHandle, &sqidx, 1 );
+  lseek( NewSqdHandle, sqidx.ofs, SEEK_SET );
+  read_sqhdr( NewSqdHandle, &sqhdr );
+  sqhdr.next_frame = 0;
+  lseek( NewSqdHandle, sqidx.ofs, SEEK_SET );
+  write_sqhdr( NewSqdHandle, &sqhdr );
+  lseek( NewSqdHandle, 0L, SEEK_SET );
+  write_sqbase( NewSqdHandle, &sqbase );
+
+  unlock( SqdHandle, 0, 1 );
+
+  close( NewSqdHandle );
+  close( NewSqiHandle );
+  close( SqdHandle );
+
+  free( sqd );
+  free( newsqd );
+  free( newsqi );
+
+  fprintf( stderr, "%ld messages saved\n", saved );
+
+  return 0;
+}
+
+
+int main( int argc, char *argv[] )
+{
+  int i, j, extIndx;
+  int stripExt = 0;
+
+  versionStr = GenVersionStr( "hptsqfix", VER_MAJOR, VER_MINOR, VER_PATCH, VER_BRANCH, cvs_date );
+  printf( "%s\n\n", versionStr );
+
+  if( argc < 2 )
+    usage(  );
+
+  for( i = 1; i < argc; i++ )
+  {
+    if( argv[i][0] == '-' )
+    {
+      if( stricmp( argv[i], "-f" ) == 0 )
+      {
+        tryfind = 1;
+      }
+      else if( stricmp( argv[i], "-e" ) == 0 )
+      {
+        stripExt = 1;
+      }
+      else if( stricmp( argv[i], "-u" ) == 0 )
+      {
+        unDelete = 1;
+      }
+      else
+      {
+        usage(  );
+      }
+    }
+  }
+
+  for( i = 1; i < argc; i++ )
+  {
+    if( argv[i][0] != '-' )
+    {
+
+      if( stripExt )
+      {
+        extIndx = 0;
+        for( j = 0; argv[i][j]; j++ )
+        {
+          if( argv[i][j] == '.' )
+            extIndx = j;
+        }
+        if( extIndx > 0 )
+        {
+          argv[i][extIndx] = '\0';
+        }
+        else
+        {
+          fprintf( stderr, "Warning: loose extension in '%s'\n", argv[i] );
+        }
+      }
+
+      fprintf( stderr, "Repairing area '%s'\n", argv[i] );
+
+      repair( argv[i] );
+
+      fprintf( stderr, "Done\n\n" );
+    }
+  }
+
+  return 0;
+}
