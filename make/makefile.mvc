@@ -1,37 +1,38 @@
 # $Id$
 #
-# Microsoft Visual C++ Makefile for build static program(s)
-# No support for the Husky build environment.
-#
-# Tested on MS Visual C 6.0
-#
-include makefile.inc
+# Microsoft Visual C++ Makefile for build hptsqfix
 
-## programs ##
-CC	= cl
-AR	= lib
-LINK	= link
-RANLIB	=
-RM	= del
 
-## file suffixes ##
-_C	  = .c
-_OBJ	  = .obj
-_EXP	  = .exp
-_LIB	  = .lib
-_DLL	  = .dll 
-_EXE	  = .exe
+## include common makefiles part ##
+!include makefile.inc
+!include ../../huskymak.cfg
 
-## programs ##
-CFLAGS	= -nologo -Zp1
-CINCL	= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib
-CDEFS	= -D__NT__ -DNT -DWINNT -DWIN32 -D_CONSOLE
-COPT	= -Ob2
 
-EXENAMEFLAG = -Fe
+## program options ##
 
-LIBS	= ..\..\fidoconf\make\fconfmvc.lib ..\..\smapi\make\smapimvc.lib \
-	  ..\..\huskylib\make\huskymvc.lib
+## options for compiler ##
+CINCL	= -I$(H_DIR) -I..\..\huskylib -I..\..\smapi -I..\..\fidoconf $(HPTZIPI)
+
+CFLAGS	= $(CFLAGS) $(CINCL)
+
+## options for linker ##
+LFLAGS	=$(LFLAGS) $(LINKPDBOPT)$(BINOUT)
+
+# List of HUSKY libraries required to build binary file(s)
+# for executables -- $(LIBSL)
+# for dynamic libraries -- $(DLLS)
+LIBS	= $(LIBS) $(HPTZIPL)
+!if $(DYNLIBS)==1
+LIBSL	= $(LIBS) \
+	  $(IMPLIBPREFIX)husky$(DLLSUFFIX)$(_LIB) \
+	  $(IMPLIBPREFIX)smapi$(DLLSUFFIX)$(_LIB) \
+	  $(IMPLIBPREFIX)fidoconfig$(DLLSUFFIX)$(_LIB)
+!else
+LIBSL	= $(LIBS) \
+	  $(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB) \
+	  $(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
+	  $(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB)
+!endif
 
 default:
 	@echo Run 'make programs' to build static version of programs ($(PROGRAMS))
@@ -40,12 +41,16 @@ default:
 all: programs
 programs: $(PROGRAMS)
 
-{$(_SRC_DIR)}$(_C)$(_OBJ):
-	@$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) -c $<
+$(OBJS) $(PRGOBJS) : $(HEADERS) makefile.mvc ../../huskymak.cfg makefile.inc
+
+{$(_SRC_DIR)}$(_C){$(O)}$(_OBJ)::
+	@$(CC) $(CFLAGS) $(OBJOPT) $(OBJNAMEOPT)$(O) @<<
+$<
+<<
 
 $(PROGRAMS): $(OBJS)
 	@echo Create $(PROGRAMS)...
-	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $** $(LIBS)
+	@$(LINK) $(LFLAGS) $(LINKNAMEOPT)$@ $** $(LIBSL)
 
 man:
 
@@ -53,10 +58,13 @@ doc: man
 	man2html$(_EXE) <..\$(LIBNAME).1 >$(LIBNAME).html
 
 clean:
-	-$(RM) $(RMOPT) *$(_OBJ)
+	-$(RM) $(RMOPT) VC*$(_PDB)
+	-$(RM) $(RMOPT) $(OBJS:/=\)
+	-$(RM) $(RMOPT) $(PROGRAMSILK:/=\)
 
 distclean: clean
-	-$(RM) $(RMOPT) $(PROGRAMS)
+	-$(RM) $(RMOPT) $(PROGRAMSPDB:/=\)
+	-$(RM) $(RMOPT) $(PROGRAMS:/=\)
 	-$(RM) $(RMOPT) $(LIBNAME).html
 
 install: programs doc
