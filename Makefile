@@ -46,10 +46,10 @@ distclean: clean
 all: hptsqfix$(_EXE) hptsqfix.1.gz
 
 install: all
-	$(INSTALL) $(IBOPT) hptsqfix$(_EXE) $(BINDIR)
+	$(INSTALL) $(IBOPT) hptsqfix$(_EXE) $(DESTDIR)$(BINDIR)
 ifdef MANDIR
-	-$(MKDIR) $(MKDIROPT) $(MANDIR)$(DIRSEP)man1
-	$(INSTALL) $(IMOPT) hptsqfix.1.gz $(MANDIR)$(DIRSEP)man1
+	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(MANDIR)$(DIRSEP)man1
+	$(INSTALL) $(IMOPT) hptsqfix.1.gz $(DESTDIR)$(MANDIR)$(DIRSEP)man1
 endif
 
 uninstall:
