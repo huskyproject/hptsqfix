@@ -3,37 +3,31 @@
 # Makefile for Building hptkill with cross-compiler Mingw32
 # No support for the Husky build environment.
 
-CC	= gcc
-RM	= del
+## include common makefiles part ##
+include ../../huskybse/huskymak.mgw
+include makefile.inc
 
-CDEFS	= -c
-CINCL	= -I../h -I../../fidoconf -I../../smapi -I../../huskylib
-CFLAGS	= -Wall
-COPT	= -O3
+CINCL	+= -I$(H_DIR) -I../../smapi -I../../huskylib
 
-#LFLAGS	= -L../../huskylib/make -L../../smapi/make -L../../fidoconf
-#LIBS	= -lfidoconfigmgw -lsmapimgw -lhuskymgw  -luser32
-LFLAGS	=
-LIBS	= ../../fidoconf/fidoconf.dll ../../smapi/make/smapi.dll \
- ../../huskylib/make/husky.dll
-SRC_DIR	= ../src/
+LIBS	+= ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
+	   ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
+
 
 default: all
 
-TARGET	= hptsqfix.exe
-
-OBJS	= hptsqfix.o
+TARGET	= $(LIBNAME)$(_EXE)
 
 all: $(TARGET)
 
-%.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) $(SRC_DIR)$*.c
+%$(_OBJ): $(_SRC_DIR)%$(_C)
+	@echo Compiling $<
+	@$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(OBJOPT) $(_SRC_DIR)$*$(_C)
 
 $(TARGET): $(OBJS)
-	$(CC) $(LFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
+	@$(CC) $(CFLAGS) $(EXENAMEFLAG) $(TARGET) $(OBJS) $(LIBS)
 
 clean:
-	-$(RM) *.o
+	-$(RM) *$(_OBJ)
 
 distclean:
 	-$(RM) $(TARGET)
