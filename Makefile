@@ -44,8 +44,9 @@ clean:
 distclean: clean
 	-$(RM) $(RMOPT) hptsqfix$(_EXE)
 	-$(RM) $(RMOPT) hptsqfix.1.gz
+	-$(RM) $(RMOPT) hptsqfix.ru.html
 
-all: hptsqfix$(_EXE) hptsqfix.1.gz
+all: hptsqfix$(_EXE) hptsqfix.1.gz hptsqfix.ru.html
 
 install: all
 	$(INSTALL) $(IBOPT) hptsqfix$(_EXE) $(DESTDIR)$(BINDIR)
