@@ -3,6 +3,9 @@
 ifeq ($(DEBIAN), 1)
 # Every Debian-Source-Paket has one included.
 include /usr/share/husky/huskymak.cfg
+else ifdef RPM_BUILD_ROOT
+# RPM build requires all files to be in the source directory
+include huskymak.cfg
 else
 include ../huskymak.cfg
 endif
@@ -49,6 +52,7 @@ distclean: clean
 all: hptsqfix$(_EXE) hptsqfix.1.gz hptsqfix.ru.html
 
 install: all
+	$(MKDIR) $(MKDIROPT) $(DESTDIR)$(BINDIR)
 	$(INSTALL) $(IBOPT) hptsqfix$(_EXE) $(DESTDIR)$(BINDIR)
 ifdef MANDIR
 	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(MANDIR)$(DIRSEP)man1
