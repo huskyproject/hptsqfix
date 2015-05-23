@@ -88,6 +88,7 @@ int Open_File( char *name, word mode )
 
 void usage(  )
 {
+  printf( "hptsqfix corrects errors in squish message bases\n");
   printf( "Usage: hptsqfix [options] areafilename ...\n"
           "Options:  -f\t- try to find next header after broken msg\n"
           "\t  -e\t- 'areafilename' has extension, strip it\n"
