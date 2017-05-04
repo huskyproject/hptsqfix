@@ -35,8 +35,6 @@ hptsqfix$(_EXE): $(OBJS)
 
 hptsqfix.1.gz: man/hptsqfix.1
 	gzip -9c man/hptsqfix.1 > hptsqfix.1.gz
-hptsqfix.ru.html:
-	-wget -k -O hptsqfix.ru.html 'http://sourceforge.net/apps/mediawiki/husky/index.php?title=%D0%9F%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B0_hptsqfix&printable=yes'
 
 clean:
 	-$(RM) $(RMOPT) *$(_OBJ)
@@ -49,7 +47,7 @@ distclean: clean
 	-$(RM) $(RMOPT) hptsqfix.1.gz
 	-$(RM) $(RMOPT) hptsqfix.ru.html
 
-all: hptsqfix$(_EXE) hptsqfix.1.gz hptsqfix.ru.html
+all: hptsqfix$(_EXE) hptsqfix.1.gz
 
 install: all
 	$(MKDIR) $(MKDIROPT) $(DESTDIR)$(BINDIR)
