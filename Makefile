@@ -45,7 +45,6 @@ clean:
 distclean: clean
 	-$(RM) $(RMOPT) hptsqfix$(_EXE)
 	-$(RM) $(RMOPT) hptsqfix.1.gz
-	-$(RM) $(RMOPT) hptsqfix.ru.html
 
 all: hptsqfix$(_EXE) hptsqfix.1.gz
 
@@ -58,7 +57,6 @@ ifdef MANDIR
 endif
 ifdef HTMLDIR
 	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(HTMLDIR)$(DIRSEP)hptsqfix
-	$(INSTALL) $(IMOPT) hptsqfix.ru.html $(DESTDIR)$(HTMLDIR)$(DIRSEP)hptsqfix
 endif
 
 uninstall:
@@ -67,6 +65,5 @@ ifdef MANDIR
 	-$(RM) $(RMOPT) $(MANDIR)$(DIRSEP)man1$(DIRSEP)hptsqfix.1.gz
 endif
 ifdef HTMLDIR
-	-$(RM) $(RMOPT) $(DESTDIR)$(HTMLDIR)$(DIRSEP)hptsqfix$(DIRSEP)/hptsqfix.ru.html
 	-$(RM) $(RMOPT) $(DESTDIR)$(HTMLDIR)$(DIRSEP)hptsqfix
 endif
