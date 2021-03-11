@@ -268,9 +268,9 @@ int repair(char * areaName)
 
     if(SqdHandle == -1)
     {
-        free(sqd);
-        free(newsqd);
-        free(newsqi);
+        nfree(sqd);
+        nfree(newsqd);
+        nfree(newsqi);
         return 0;
     }                           /* endif */
 
@@ -280,9 +280,9 @@ int repair(char * areaName)
 
     if(NewSqdHandle == -1)
     {
-        free(sqd);
-        free(newsqd);
-        free(newsqi);
+        nfree(sqd);
+        nfree(newsqd);
+        nfree(newsqi);
         close(SqdHandle);
         return 0;
     }                           /* endif */
@@ -291,9 +291,9 @@ int repair(char * areaName)
 
     if(NewSqiHandle == -1)
     {
-        free(sqd);
-        free(newsqd);
-        free(newsqi);
+        nfree(sqd);
+        nfree(newsqd);
+        nfree(newsqi);
         close(NewSqdHandle);
         close(SqdHandle);
         return 0;
@@ -308,9 +308,9 @@ int repair(char * areaName)
         close(NewSqdHandle);
         close(NewSqiHandle);
         close(SqdHandle);
-        free(sqd);
-        free(newsqd);
-        free(newsqi);
+        nfree(sqd);
+        nfree(newsqd);
+        nfree(newsqi);
         fprintf(stderr, "\nCan't lock msg base\n");
         return 0;
     }
@@ -392,7 +392,7 @@ int repair(char * areaName)
 
         sqidx.umsgid = sqbase.num_msg + 1;
         write_sqidx(NewSqiHandle, &sqidx, 1);
-        free(text);
+        nfree(text);
         sqbase.num_msg++;
         sqbase.high_msg = sqbase.num_msg;
         saved++;
@@ -420,9 +420,9 @@ int repair(char * areaName)
     close(NewSqdHandle);
     close(NewSqiHandle);
     close(SqdHandle);
-    free(sqd);
-    free(newsqd);
-    free(newsqi);
+    nfree(sqd);
+    nfree(newsqd);
+    nfree(newsqi);
     fprintf(stderr, "%ld messages saved\n", saved);
     return 0;
 } /* repair */
