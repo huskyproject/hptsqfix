@@ -1,8 +1,11 @@
 
-Please read the files (especially README.Makefiles) in the
+Please read the files (especially README.Makefiles and INSTALL.asciidoc) in the
 husky-common (huskybse) package FIRST! If you don't have this package you
-should download it from http://husky.sourceforge.net/
+should grab it:
 
+git clone https://github.com/huskyproject/huskybse.git
+
+Or you may read it on GitHub: https://github.com/huskyproject/huskybse
 
 Instructions to build HPTSQFIX from sources.
 ---------------------------------------
