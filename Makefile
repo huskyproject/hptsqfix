@@ -127,6 +127,7 @@ endif
 
 
 # Depend
+ifeq ($(MAKECMDGOALS),depend)
 hptsqfix_depend: $(hptsqfix_DEPS) ;
 
 # Build a dependency makefile for the source file
@@ -138,6 +139,7 @@ $(hptsqfix_DEPS): $(hptsqfix_DEPDIR)%$(_DEP): $(hptsqfix_SRCDIR)%.c | $(hptsqfix
 
 $(hptsqfix_DEPDIR): | $(hptsqfix_BUILDDIR) do_not_run_depend_as_root
 	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
+endif
 
 $(hptsqfix_BUILDDIR):
 	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
