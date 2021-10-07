@@ -362,7 +362,7 @@ int repair(char * areaName)
         memset(xmsg.replies, '\000', sizeof(UMSGID) * MAX_REPLY);
         text = (char *)calloc(sqhdr.frame_length, sizeof(char *));
         farread(SqdHandle, text, (sqhdr.frame_length - XMSG_SIZE));
-        memcpy(text, text, sqhdr.msg_length);
+        /* memcpy(text, text, sqhdr.msg_length); */
         frame_length       = sqhdr.frame_length;
         sqhdr.frame_length = sqhdr.msg_length;
 
