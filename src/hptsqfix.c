@@ -175,7 +175,7 @@ int Checkhdr(int SqdHandle, SQHDR * sqhdr)
     if(stop == 0 && sqhdr->frame_length != sqhdr->msg_length)
     {
         fprintf(stderr,
-                "\nFrame Length != Msg Length %ld:%ld\n",
+                "\nFrame Length != Msg Length %u:%u\n",
                 sqhdr->frame_length,
                 sqhdr->msg_length);
     }
@@ -202,7 +202,7 @@ int Checkhdr(int SqdHandle, SQHDR * sqhdr)
 
     if(stop == 0 && sqhdr->msg_length <= XMSG_SIZE)
     {
-        fprintf(stderr, "\nMessage body is too short: %ld\n", sqhdr->msg_length);
+        fprintf(stderr, "\nMessage body is too short: %u\n", sqhdr->msg_length);
 
         if(tryfind)
         {
@@ -326,7 +326,7 @@ int repair(char * areaName)
 
     for(stop = 0, i = 1; !stop; i++)
     {
-        fprintf(stderr, "Msg %ld", i);
+        fprintf(stderr, "Msg %u", i);
         stop = Checkhdr(SqdHandle, &sqhdr);
 
         if(stop == 1)
@@ -406,7 +406,7 @@ int repair(char * areaName)
         fprintf(stderr, "\r");
         maxMsgLen -= frame_length;
     }
-    fprintf(stderr, "\n%ld messages read\n", i - 2);
+    fprintf(stderr, "\n%u messages read\n", i - 2);
     lseek(NewSqiHandle, SQIDX_SIZE, SEEK_END);
     read_sqidx(NewSqiHandle, &sqidx, 1);
     lseek(NewSqdHandle, sqidx.ofs, SEEK_SET);
