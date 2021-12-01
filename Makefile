@@ -6,9 +6,9 @@
 #
 
 # Version
-hptsqfix_g1:=$(GREP) -Po 'define\s+VER_MAJOR\s+\K\d+'
-hptsqfix_g2:=$(GREP) -Po 'define\s+VER_MINOR\s+\K\d+'
-hptsqfix_g3:=$(GREP) -Po 'define\s+VER_PATCH\s+\K\d+'
+hptsqfix_g1:=$(GREP) -Po 'define\s+hptsqfix_VER_MAJOR\s+\K\d+'
+hptsqfix_g2:=$(GREP) -Po 'define\s+hptsqfix_VER_MINOR\s+\K\d+'
+hptsqfix_g3:=$(GREP) -Po 'define\s+hptsqfix_VER_PATCH\s+\K\d+'
 hptsqfix_g4:=$(GREP) -Po 'char\s+cvs_date\[\]\s*=\s*"\K\d+-\d+-\d+'
 hptsqfix_VERMAJOR := $(shell $(hptsqfix_g1) $(hptsqfix_ROOTDIR)$(hptsqfix_H_DIR)version.h)
 hptsqfix_VERMINOR := $(shell $(hptsqfix_g2) $(hptsqfix_ROOTDIR)$(hptsqfix_H_DIR)version.h)

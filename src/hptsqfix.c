@@ -432,7 +432,8 @@ int main(int argc, char * argv[])
     int i, j, extIndx;
     int stripExt = 0;
 
-    versionStr = GenVersionStr("hptsqfix", VER_MAJOR, VER_MINOR, VER_PATCH, VER_BRANCH, cvs_date);
+    versionStr = GenVersionStr("hptsqfix", hptsqfix_VER_MAJOR, hptsqfix_VER_MINOR,
+                               hptsqfix_VER_PATCH, hptsqfix_VER_BRANCH, cvs_date);
     printf("%s\n\n", versionStr);
 
     if(argc < 2)
