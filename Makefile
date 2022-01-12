@@ -5,18 +5,6 @@
 # Requires: husky enviroment
 #
 
-# Version
-hptsqfix_g1:=$(GREP) -Po 'define\s+hptsqfix_VER_MAJOR\s+\K\d+'
-hptsqfix_g2:=$(GREP) -Po 'define\s+hptsqfix_VER_MINOR\s+\K\d+'
-hptsqfix_g3:=$(GREP) -Po 'define\s+hptsqfix_VER_PATCH\s+\K\d+'
-hptsqfix_g4:=$(GREP) -Po 'char\s+cvs_date\[\]\s*=\s*"\K\d+-\d+-\d+'
-hptsqfix_VERMAJOR := $(shell $(hptsqfix_g1) $(hptsqfix_ROOTDIR)$(hptsqfix_H_DIR)version.h)
-hptsqfix_VERMINOR := $(shell $(hptsqfix_g2) $(hptsqfix_ROOTDIR)$(hptsqfix_H_DIR)version.h)
-hptsqfix_VERPATCH := $(shell $(hptsqfix_g3) $(hptsqfix_ROOTDIR)$(hptsqfix_H_DIR)version.h)
-hptsqfix_cvsdate  := $(shell $(hptsqfix_g4) $(hptsqfix_ROOTDIR)$(hptsqfix_H_DIR)cvsdate.h)
-hptsqfix_reldate  := $(subst -,,$(hptsqfix_cvsdate))
-hptsqfix_VER      := $(hptsqfix_VERMAJOR).$(hptsqfix_VERMINOR).$(hptsqfix_reldate)
-
 hptsqfix_LIBS := $(smapi_TARGET_BLD) $(huskylib_TARGET_BLD)
 
 hptsqfix_CFLAGS = $(CFLAGS)
