@@ -25,11 +25,11 @@ ifdef MAN1DIR
     hptsqfix_MAN1DST := $(DESTDIR)$(MAN1DIR)$(DIRSEP)$(hptsqfix_MAN1PAGES).gz
 endif
 
-.PHONY: hptsqfix_all hptsqfix_install hptsqfix_uninstall hptsqfix_clean \
+.PHONY: hptsqfix_build hptsqfix_install hptsqfix_uninstall hptsqfix_clean \
         hptsqfix_distclean hptsqfix_depend hptsqfix_rmdir_DEP hptsqfix_rm_DEPS \
         hptsqfix_clean_OBJ hptsqfix_main_distclean
 
-hptsqfix_all: $(hptsqfix_TARGET_BLD) $(hptsqfix_MAN1BLD)
+hptsqfix_build: $(hptsqfix_TARGET_BLD) $(hptsqfix_MAN1BLD)
 
 ifneq ($(MAKECMDGOALS), depend)
     ifneq ($(MAKECMDGOALS), distclean)
