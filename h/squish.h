@@ -7,7 +7,7 @@
 #define EXT_SQIFILE ".sqi"
 #define EXT_SQLFILE ".sql"
 
-typedef long FOFS;
+typedef hUINT32 FOFS;
 
 #define NULL_FRAME ((FOFS)0L)
 #define FRAME_normal 0x00
