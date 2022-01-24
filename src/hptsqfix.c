@@ -244,6 +244,9 @@ int Checkhdr(int SqdHandle, SQHDR * sqhdr)
     return stop;
 } /* Checkhdr */
 
+#define SUCCESS 0
+#define FAIL    1
+
 int repair(char * areaName)
 {
     int SqdHandle;
@@ -268,11 +271,12 @@ int repair(char * areaName)
 
     if(SqdHandle == -1)
     {
+        fprintf(stderr, "\nCannot open the file %s\n", sqd);
         nfree(sqd);
         nfree(newsqd);
         nfree(newsqi);
-        return 0;
-    }                           /* endif */
+        return FAIL;
+    }
 
     sprintf(newsqd, "%s.tmd", areaName);
     sprintf(newsqi, "%s.tmi", areaName);
@@ -280,24 +284,26 @@ int repair(char * areaName)
 
     if(NewSqdHandle == -1)
     {
+        fprintf(stderr, "\nCannot create the file %s\n", newsqd);
         nfree(sqd);
         nfree(newsqd);
         nfree(newsqi);
         close(SqdHandle);
-        return 0;
-    }                           /* endif */
+        return FAIL;
+    }
 
     NewSqiHandle = Open_File(newsqi, fop_wpb);
 
     if(NewSqiHandle == -1)
     {
+        fprintf(stderr, "\nCannot create the file %s\n", newsqi);
         nfree(sqd);
         nfree(newsqd);
         nfree(newsqi);
         close(NewSqdHandle);
         close(SqdHandle);
-        return 0;
-    }                           /* endif */
+        return FAIL;
+    }
 
     lseek(SqdHandle, 0L, SEEK_END);
     maxMsgLen = tell(SqdHandle) - SQBASE_SIZE - SQHDR_SIZE;
@@ -311,7 +317,7 @@ int repair(char * areaName)
         nfree(sqd);
         nfree(newsqd);
         nfree(newsqi);
-        fprintf(stderr, "\nCan't lock msg base\n");
+        fprintf(stderr, "\nCan't lock the message base\n");
         return 0;
     }
 
@@ -424,12 +430,12 @@ int repair(char * areaName)
     nfree(newsqd);
     nfree(newsqi);
     fprintf(stderr, "%ld messages saved\n", saved);
-    return 0;
+    return SUCCESS;
 } /* repair */
 
 int main(int argc, char * argv[])
 {
-    int i, j, extIndx;
+    int i, j, extIndx, result = 0;
     int stripExt = 0;
 
     versionStr = GenVersionStr("hptsqfix", hptsqfix_VER_MAJOR, hptsqfix_VER_MINOR,
@@ -491,9 +497,12 @@ int main(int argc, char * argv[])
             }
 
             fprintf(stderr, "Repairing area '%s'\n", argv[i]);
-            repair(argv[i]);
-            fprintf(stderr, "Done\n\n");
+            result = repair(argv[i]);
+            if(result == SUCCESS)
+            {
+                fprintf(stderr, "Done\n\n");
+            }
         }
     }
-    return 0;
+    return result;
 } /* main */
