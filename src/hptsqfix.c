@@ -162,25 +162,25 @@ int findhdr(int SqdHandle)
     return rc;
 } /* findhdr */
 
-int Checkhdr(int SqdHandle, SQHDR * sqhdr)
+int Checkhdr(int SqdHandle, SQHDR * psqhdr)
 {
     int stop = 0;
 
-    if(read_sqhdr(SqdHandle, sqhdr) == 0)
+    if(read_sqhdr(SqdHandle, psqhdr) == 0)
     {
         fprintf(stderr, "... end");
         stop++;
     }
 
-    if(stop == 0 && sqhdr->frame_length != sqhdr->msg_length)
+    if(stop == 0 && psqhdr->frame_length != psqhdr->msg_length)
     {
         fprintf(stderr,
                 "\nFrame Length != Msg Length %u:%u\n",
-                sqhdr->frame_length,
-                sqhdr->msg_length);
+                psqhdr->frame_length,
+                psqhdr->msg_length);
     }
 
-    if(stop == 0 && sqhdr->id != SQHDRID)
+    if(stop == 0 && psqhdr->id != SQHDRID)
     {
         fprintf(stderr, "\nLooks like Message header is damaged\n");
 
@@ -200,9 +200,9 @@ int Checkhdr(int SqdHandle, SQHDR * sqhdr)
         }
     }
 
-    if(stop == 0 && sqhdr->msg_length <= XMSG_SIZE)
+    if(stop == 0 && psqhdr->msg_length <= XMSG_SIZE)
     {
-        fprintf(stderr, "\nMessage body is too short: %u\n", sqhdr->msg_length);
+        fprintf(stderr, "\nMessage body is too short: %u\n", psqhdr->msg_length);
 
         if(tryfind)
         {
@@ -220,7 +220,7 @@ int Checkhdr(int SqdHandle, SQHDR * sqhdr)
         }
     }
 
-    if(stop == 0 && sqhdr->frame_length > maxMsgLen)
+    if(stop == 0 && psqhdr->frame_length > maxMsgLen)
     {
         fprintf(stderr,
                 "\nFrame is larger than rest of file\nLooks like Message header is damaged\n");
