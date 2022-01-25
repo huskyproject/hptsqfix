@@ -330,6 +330,7 @@ int repair(char * areaName)
     sqbase.last_frame  = sqbase.begin_frame;
     sqbase.free_frame  = sqbase.last_free_frame = 0;
     sqbase.end_frame   = sqbase.begin_frame;
+    sqbase.sz_sqhdr    = sizeof(SQHDR);
 
     lseek(NewSqdHandle, SQBASE_SIZE, SEEK_SET);
 
