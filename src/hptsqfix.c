@@ -386,8 +386,34 @@ int repair(char * areaName)
         sqhdr.next_frame  = tell(NewSqdHandle) + SQHDR_SIZE + sqhdr.msg_length;
         sqbase.last_frame = tell(NewSqdHandle);
         sqidx.ofs         = sqbase.last_frame;
-        write_sqhdr(NewSqdHandle, &sqhdr);
-        write_xmsg(NewSqdHandle, &xmsg);
+        if(!write_sqhdr(NewSqdHandle, &sqhdr))
+        {
+            fprintf(stderr,
+                    "\nAn error occured while writing SQHDR to %s\n",
+                    newsqd);
+            close(NewSqdHandle);
+            close(NewSqiHandle);
+            close(SqdHandle);
+            nfree(sqd);
+            nfree(newsqd);
+            nfree(newsqi);
+            nfree(text);
+            return FAIL;
+        }
+        if(!write_xmsg(NewSqdHandle, &xmsg))
+        {
+            fprintf(stderr,
+                    "\nAn error occured while writing the message to %s\n",
+                    newsqd);
+            close(NewSqdHandle);
+            close(NewSqiHandle);
+            close(SqdHandle);
+            nfree(sqd);
+            nfree(newsqd);
+            nfree(newsqi);
+            nfree(text);
+            return FAIL;
+        }
         farwrite(NewSqdHandle, text, (sqhdr.msg_length - XMSG_SIZE));
         sqbase.end_frame = tell(NewSqdHandle);
         sqidx.hash       = SquishHash(xmsg.to);
@@ -398,7 +424,21 @@ int repair(char * areaName)
         }
 
         sqidx.umsgid = sqbase.num_msg + 1;
-        write_sqidx(NewSqiHandle, &sqidx, 1);
+        if(!write_sqidx(NewSqiHandle, &sqidx, 1))
+        {
+            fprintf(stderr,
+                    "\nAn error occured while writing the index to %s\n",
+                    newsqi);
+            close(NewSqdHandle);
+            close(NewSqiHandle);
+            close(SqdHandle);
+            nfree(sqd);
+            nfree(newsqd);
+            nfree(newsqi);
+            nfree(text);
+            return FAIL;
+        }
+
         nfree(text);
         sqbase.num_msg++;
         sqbase.high_msg = sqbase.num_msg;
