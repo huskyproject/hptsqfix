@@ -331,6 +331,8 @@ int repair(char * areaName)
     sqbase.free_frame  = sqbase.last_free_frame = 0;
     sqbase.end_frame   = sqbase.begin_frame;
 
+    lseek(NewSqdHandle, SQBASE_SIZE, SEEK_SET);
+
     for(stop = 0, i = 1; !stop; i++)
     {
         fprintf(stderr, "Msg %u", i);
