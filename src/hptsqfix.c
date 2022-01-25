@@ -413,7 +413,7 @@ int repair(char * areaName)
         fprintf(stderr, "\r");
         maxMsgLen -= frame_length;
     }
-    fprintf(stderr, "\n%u messages read\n", i - 2);
+    fprintf(stderr, "\n%u messages read\n", i - 1);
     lseek(NewSqiHandle, SQIDX_SIZE, SEEK_END);
     read_sqidx(NewSqiHandle, &sqidx, 1);
     lseek(NewSqdHandle, sqidx.ofs, SEEK_SET);
