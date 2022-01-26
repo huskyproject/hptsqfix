@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH HPTSQFIX 1 "hptsqfix" "20 September 2002" "Husky - Portable Fidonet Software"
+.TH HPTSQFIX 1 2022-01-25 Husky "Husky - Portable Fidonet Software"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -15,8 +15,12 @@
 .\" .br        insert line break
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
+.\"
+.\" Modified 2022-01-25 by Michael Dukelsky 2:5020/1042
+.\"
 .SH NAME
-hptsqfix \- program to rebuild index and some info in squish message bases
+.BR hptsqfix
+\- a program to fix errors in squish message bases.
 .SH SYNOPSIS
 .B hptsqfix
 .RI [ options ]
@@ -24,26 +28,29 @@ areafilename ...
 .SH DESCRIPTION
 .B hptsqfix
 is a program that finds and corrects errors in squish message bases.
-It reads broken msgbase file
+It reads a broken message base file
 .I <areafilename>.sqd
-and builds new msgbase files:
+and builds two new message base files:
 .I <areafilename>.tmd
 and
 .I <areafilename>.tmi.
-.br
-After repair you must backup old
+
+After repair you have to backup the old
 .I <areafilename>.sq*
 files and rename
 .I <areafilename>.tm*
 to
 .I <areafilename>.sq*
+
+The repaired message base does not contain any message links. Therefore,
+you should use `hpt link` or `hptlink` if you want your message base to be linked.
 .SH OPTIONS
 .TP
 .B \-f
-try to find next header after broken msg.
+try to find the following header after a broken msg.
 .TP
 .B \-e
-areafilename has extension, strip it.
+the area filename has an extension, strip it.
 .TP
 .B \-u
 undelete (restore deleted messages).
@@ -51,10 +58,9 @@ undelete (restore deleted messages).
 .B \-s
 sort messages by date written.
 .SH NOTES
-All Husky-Software is written by various developers. For detailed information
-about the Husky-Team take a look at 
-.B http://husky.sourceforge.net/team.html
-.
+All Husky software is written by various developers.
+
 .SH AUTHOR
 This manual page was written by Pavel Andreew <pavel@collage.etel.ru>,
-for the Debian GNU/Linux system (but may be used by others).
+for the Debian GNU/Linux system (but may be used by others). The manual
+page was modified by Michael Dukelsky 2:5020/1042.
