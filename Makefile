@@ -122,7 +122,7 @@ hptsqfix_depend: $(hptsqfix_DEPS) ;
 $(hptsqfix_DEPS): $(hptsqfix_DEPDIR)%$(_DEP): $(hptsqfix_SRCDIR)%.c | $(hptsqfix_DEPDIR)
 	@set -e; rm -f $@; \
 	$(CC) -MM $(hptsqfix_CFLAGS) $(hptsqfix_CDEFS) $< > $@.$$$$; \
-	sed 's,\($*\)$(_OBJ)[ :]*,$(hptsqfix_OBJDIR)\1$(_OBJ) $@ : ,g' < $@.$$$$ > $@; \
+	sed 's,\($*\)$(__OBJ)[ :]*,$(hptsqfix_OBJDIR)\1$(_OBJ) $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
 $(hptsqfix_DEPDIR): | $(hptsqfix_BUILDDIR) do_not_run_depend_as_root
