@@ -7,13 +7,11 @@
 
 hptsqfix_LIBS := $(smapi_TARGET_BLD) $(huskylib_TARGET_BLD)
 
-hptsqfix_CFLAGS = $(CFLAGS)
 hptsqfix_CDEFS := $(CDEFS) -DUNAME=\"$(UNAME)\" -I$(smapi_ROOTDIR) \
                           -I$(huskylib_ROOTDIR) -I$(hptsqfix_ROOTDIR)$(hptsqfix_H_DIR)
 
 hptsqfix_SRC  = $(hptsqfix_SRCDIR)hptsqfix.c
 hptsqfix_OBJS = $(addprefix $(hptsqfix_OBJDIR),$(notdir $(hptsqfix_SRC:.c=$(_OBJ))))
-hptsqfix_DEPS = $(addprefix $(hptsqfix_DEPDIR),$(notdir $(hptsqfix_SRC:.c=$(_DEP))))
 
 hptsqfix_TARGET     = hptsqfix$(_EXE)
 hptsqfix_TARGET_BLD = $(hptsqfix_BUILDDIR)$(hptsqfix_TARGET)
@@ -112,22 +110,3 @@ hptsqfix_uninstall:
 ifdef MAN1DIR
 	-$(RM) $(RMOPT) $(hptsqfix_MAN1DST)
 endif
-
-
-# Depend
-ifeq ($(MAKECMDGOALS),depend)
-hptsqfix_depend: $(hptsqfix_DEPS) ;
-
-# Build a dependency makefile for the source file
-$(hptsqfix_DEPS): $(hptsqfix_DEPDIR)%$(_DEP): $(hptsqfix_SRCDIR)%.c | $(hptsqfix_DEPDIR)
-	@set -e; rm -f $@; \
-	$(CC) -MM $(hptsqfix_CFLAGS) $(hptsqfix_CDEFS) $< > $@.$$$$; \
-	sed 's,\($*\)$(__OBJ)[ :]*,$(hptsqfix_OBJDIR)\1$(_OBJ) $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
-$(hptsqfix_DEPDIR): | $(hptsqfix_BUILDDIR) do_not_run_depend_as_root
-	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
-endif
-
-$(hptsqfix_BUILDDIR):
-	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
