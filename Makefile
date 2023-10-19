@@ -19,8 +19,8 @@ hptsqfix_TARGET_DST = $(BINDIR_DST)$(hptsqfix_TARGET)
 
 ifdef MAN1DIR
     hptsqfix_MAN1PAGES := hptsqfix.1
-    hptsqfix_MAN1BLD := $(hptsqfix_BUILDDIR)$(hptsqfix_MAN1PAGES).gz
-    hptsqfix_MAN1DST := $(DESTDIR)$(MAN1DIR)$(DIRSEP)$(hptsqfix_MAN1PAGES).gz
+    hptsqfix_MAN1BLD := $(hptsqfix_BUILDDIR)$(hptsqfix_MAN1PAGES)$(_COMPR)
+    hptsqfix_MAN1DST := $(DESTDIR)$(MAN1DIR)$(DIRSEP)$(hptsqfix_MAN1PAGES)$(_COMPR)
 endif
 
 .PHONY: hptsqfix_build hptsqfix_install hptsqfix_uninstall hptsqfix_clean \
@@ -53,7 +53,11 @@ $(hptsqfix_OBJDIR): | $(hptsqfix_BUILDDIR) do_not_run_make_as_root
 # Build man pages
 ifdef MAN1DIR
     $(hptsqfix_MAN1BLD): $(hptsqfix_MANDIR)$(hptsqfix_MAN1PAGES) | do_not_run_make_as_root
-	gzip -c $< > $@
+    ifdef COMPRESS
+		$(COMPRESS) -c $< > $@
+    else
+		$(CP) $(CPOPT) $< $@
+    endif
 else
     $(hptsqfix_MAN1BLD): ;
 endif
